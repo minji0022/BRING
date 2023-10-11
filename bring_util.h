@@ -30,12 +30,12 @@ int bi_is_zero(BIGINT* bi_src); /**** 빅인티저가 0인지 판별하는 함�
 int bi_is_one(BIGINT* bi_src); /**** 빅인티저가 1인지 판별하는 함수 ****/ // true 1, false 0 리턴
 int bi_compare_ABS(BIGINT* bi_src1, BIGINT* bi_src2); /**** 두개의 빅인티저 절대값 비교 함수 ****/
 int bi_compare_bigint(BIGINT* bi_src1, BIGINT* bi_src2); /**** 두개의 빅인티저 값 비교 함수 ****/ 
-int bi_get_BitLength(BIGINT* bi_src); /**** 빅인티저 비트 길이 반환 함수 ****/ 
-int bi_get_WordLength(BIGINT* bi_src); /**** 빅인티저 워드 길이 반환 함수 ****/ 
+int bi_get_bit_length(BIGINT* bi_src); /**** 빅인티저 비트 길이 반환 함수 ****/ 
+int bi_get_word_length(BIGINT* bi_src); /**** 빅인티저 워드 길이 반환 함수 ****/ 
 int bi_compare_length(BIGINT* bi_src1, BIGINT* bi_src2); /**** 두개의 빅인티저 길이 비교 함수 ****/
 int bi_get_max_length(BIGINT* bi_src1, BIGINT* bi_src2); /**** 두개의 빅인티저 길이 중 긴 값 리턴 함수 ****/ 
 int bi_abs_is_one(BIGINT* bi_src); /**** 빅인티저의 절댓값이 1인지 판별하는 함수 ****/ // true 1, false 0 리턴
-int bitLength_of_n(int n); /**** 정수 n의 비트 길이 리턴하는 함수 ****/
+int bi_length_of_n(int n); /**** 정수 n의 비트 길이 리턴하는 함수 ****/
 
 /**** 이 밑부분은 아직 구현 안함 ****/
 // void bi_mod(BIGINT** bi_dst, BIGINT* bi_src, int r);

@@ -57,7 +57,7 @@ int bi_set_by_string(BIGINT** bi_dst, int sign, char* str, int base) {
     (*bi_dst)->sign = sign;
 
     // check invalid input
-    if(isValidHex(str) != TRUE) {
+    if(is_valid_hex(str) != TRUE) {
         return ERR_INVALID_INPUT;
     }
     // convert str -> word array 
@@ -181,7 +181,7 @@ int bi_set_by_string_v2(BIGINT** bi_dst, int sign, char* str, int base)
 //                                  BIGINT 구조체를 활용하는 유틸 함수
 //#################################################################################################
 /* ///// 크기 비교 함수의 경우 Src1이 크거나 길면 1, 같으면 0, 작으면 -1 리턴 ///// */
-void bi_print_BIGINT_hex(BIGINT* bi_src) {
+void bi_print_bigint_hex(BIGINT* bi_src) {
     if(bi_src->sign == NEGATIVE) {
         printf("-");
     }
@@ -345,7 +345,7 @@ int bi_compare_BIGINT(BIGINT* bi_src1, BIGINT* bi_src2){ // bi_src1가 크면 1,
         
 }
 
-int bi_get_BitLength(BIGINT* bi_src) {
+int bi_get_bit_length(BIGINT* bi_src) {
     int BitLen = (bi_src->wordlen) * WORD_BIT_SIZE; // word가 unsigned int인 경우 : (bi_src->wordlen) * 32 
     int i = WORD_BIT_SIZE - 1; // word가 unsigned int인 경우 : i = 31
     while ((bi_src->p[bi_src->wordlen - 1] >> i & 0x1) == 0) {
@@ -355,15 +355,15 @@ int bi_get_BitLength(BIGINT* bi_src) {
     return BitLen;
 } 
 
-int bi_get_WordLength(BIGINT* bi_src) {
+int bi_get_word_length(BIGINT* bi_src) {
     return bi_src->wordlen;
 }
 
 int bi_compare_length(BIGINT* bi_src1, BIGINT* bi_src2){ // bi_src1가 크면 1, bi_src2가 크면 -1, 같으면 0
-    if(bi_get_length(bi_src1) > bi_get_length(bi_src2)) {
+    if(bi_get_bit_length(bi_src1) > bi_get_bit_length(bi_src2)) {
         return 1;
     }
-    else if(bi_get_length(bi_src1) < bi_get_length(bi_src2)) {
+    else if(bi_get_bit_length(bi_src1) < bi_get_bit_length(bi_src2)) {
         return -1;
     }
     else {
@@ -388,7 +388,7 @@ int bi_abs_is_one(BIGINT* bi_src){ // 절댓값이 1이면 1, 아니면 0 리턴
     return 0;
 }
 
-int bitLength_of_n(int n) {
+int bi_length_of_n(int n) {
     int length = 0;
     while(n > 0) {
         n >>= 1; // n을 오른쪽으로 1 비트 시프트
