@@ -320,7 +320,7 @@ int bi_compare_ABS(BIGINT* bi_src1, BIGINT* bi_src2){ // bi_src1가 크면 1, bi
     return 0;
 } 
 
-int bi_compare_BIGINT(BIGINT* bi_src1, BIGINT* bi_src2){ // bi_src1가 크면 1, bi_src2가 크면 -1, 같으면 0
+int bi_compare_bigint(BIGINT* bi_src1, BIGINT* bi_src2){ // bi_src1가 크면 1, bi_src2가 크면 -1, 같으면 0
     // sign : NON_NEGATIVE = 0, NEGATIVE = 1
     int x_sign = bi_src1->sign;
     int y_sign = bi_src2->sign;
@@ -360,10 +360,10 @@ int bi_get_word_length(BIGINT* bi_src) {
 }
 
 int bi_compare_length(BIGINT* bi_src1, BIGINT* bi_src2){ // bi_src1가 크면 1, bi_src2가 크면 -1, 같으면 0
-    if(bi_get_bit_length(bi_src1) > bi_get_bit_length(bi_src2)) {
+    if(bi_get_word_length(bi_src1) > bi_get_word_length(bi_src2)) {
         return 1;
     }
-    else if(bi_get_bit_length(bi_src1) < bi_get_bit_length(bi_src2)) {
+    else if(bi_get_word_length(bi_src1) < bi_get_word_length(bi_src2)) {
         return -1;
     }
     else {
