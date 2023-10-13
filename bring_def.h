@@ -20,13 +20,16 @@
 // #define MAX_BINT_LEN 64
 
 /************** 단위 **************/
-//!!!! 나중에 사용자가 word를 선택할 수 있게 해야하는데 어떻게 해야할까??????
+// !!!! 나중에 사용자가 word를 선택할 수 있게 해야하는데 어떻게 해야할까??????
 //word : unsigned char (w=8) , unsigned short : (w=16), unsigned int (w=32), unsigned long long(w=64)
-typedef unsigned int word;  // --> 나중에 이부분 수정해야함.
+typedef unsigned int word;  // !!!! --> 나중에 이부분 수정해야함.
 typedef unsigned long long ull;
 typedef unsigned char byte;
 
-#define WORD_BYTE_SIZE (sizeof(word)) // 워드의 바이트 사이즈
+#define BINARY          2
+#define DECIMAL         10
+#define HEXDECIMAL      16
+#define WORD_BYTE_SIZE (sizeof(word)) // 워드의 바이트 사이즈 // 1,2,4,8 바이트 가능함.
 #define WORD_BIT_SIZE (sizeof(word)*8) // 워드의 비트 사이즈 bit length of a word (w ∈ {8, 16, 32, 64})
 
 /************** 함수들의 작동 여부 확인을 위한 definitions **************/

@@ -10,9 +10,13 @@ int BI_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); // z <- x+y �
 int BI_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); // z <- x-y 뺄셈 함수
 int BI_Mul_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); // z <- x*y 곱셈 함수
 int BI_Sqr_zx(BIGINT** bi_dst, BIGINT* bi_src1); // z <- x^2 제곱 함수
-int BI_Exp_zx(BIGINT** bi_dst, BIGINT* bi_src, int n); // z = x^n 지수승 함수
-int BI_ExpMul_zx(BIGINT** bi_dst, BIGINT* bi_src, int n); // z = n*x 스칼라 곱셈 함수
-int BI_Div_zxy(BIGINT** bi_quotient, BIGINT* bi_remainder, BIGINT* bi_src1, BIGINT* bi_src2); // z*q + r = x / y 나눗셈 함수
+
+// z = x^n 지수승 함수 // !!!! 모듈러 넣어줘야 안 터짐
+int BI_Exp_zx(BIGINT** bi_dst, BIGINT* bi_src, BIGINT* bi_n); 
+// z = n*x 스칼라 곱셈 함수 // !!!! 모듈러 넣어줘야 안 터짐
+int BI_ExpMul_zx(BIGINT** bi_dst, BIGINT* bi_src, BIGINT* bi_n); 
+// z*q + r = x / y 나눗셈 함수
+int BI_Div_zxy(BIGINT** bi_quotient, BIGINT* bi_remainder, BIGINT* bi_src1, BIGINT* bi_src2); 
 
 //################################################################################################# 
 //                            유형 2. 연산대상 빅인티저에 연산 결과를 갱신하는 연산 함수
@@ -22,8 +26,8 @@ int BI_Add_xy(BIGINT* bi_src1, BIGINT* bi_src2); // x <- x+y 덧셈 함수
 int BI_Sub_xy(BIGINT* bi_src1, BIGINT* bi_src2); // x <- x-y 뺄셈 함수
 int BI_Mul_xy(BIGINT* bi_src1, BIGINT* bi_src2); // x <- x*y 곱셈 함수
 int BI_Sqr_x(BIGINT* bi_src1); // x <- x^2 제곱 함수
-int BI_Exp_x(BIGINT* bi_src, int n); // x = x^n 지수승 함수
-int BI_ExpMul_x(BIGINT* bi_src, int n); // x = n*x 스칼라 곱셈 함수
+int BI_Exp_x(BIGINT* bi_src, BIGINT* bi_n); // x = x^n 지수승 함수
+int BI_ExpMul_x(BIGINT* bi_src, BIGINT* bi_n); // x = n*x 스칼라 곱셈 함수
 
 
 //===============================================================================================//
@@ -34,23 +38,35 @@ int BI_ExpMul_x(BIGINT* bi_src, int n); // x = n*x 스칼라 곱셈 함수
 //################################################################################################# 
 //                                           덧셈 관련 함수 
 //#################################################################################################
-int bi_Add_w(word* dst_bData, word src1_Data, word src2_Data, int carry_in); /**** 단일 워드 덧셈 ****/
+// !!!! word p_src -> word* p_src (포인터)이어야 할수도 있음.. 근데 굳이 아니어도..? 될듯
+// bi_Add_w의 리턴 : 캐리
+int bi_Add_w(word* p_dst, word p_src1, word p_src2, int carry_in); /**** 단일 워드 덧셈 ****/ 
 void bi_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); /**** 다중 워드 덧셈 ****/
 //################################################################################################# 
 //                                           뺄셈 관련 함수 
 //#################################################################################################
-int bi_Sub_w(word* dst_bData, word src1_Data, word src2_Data, int carry_in); /**** 단일 워드 뺄셈 ****/
+// !!!! word p_src -> word* p_src (포인터)이어야 할수도 있음.. 근데 굳이 아니어도..? 될듯
+// bi_Sub_w의 리턴 : 캐리
+int bi_Sub_w(word* p_dst, word p_src1, word p_src2, int carry_in); /**** 단일 워드 뺄셈 ****/
 void bi_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); /**** 다중 워드 뺄셈 ****/
+
+
+
+//////////////////////          이 밑에 부분은 나중에 짜면서 수정!!!!!!!!!!!             //////////////////
+
+
+
 //################################################################################################# 
 //                                           곱셈 관련 함수 
 //#################################################################################################
-unsigned long long bi_Mul_w(word src1_Data, word src2_Data); /**** 단일 워드 곱셈 ****/
+// !!!!
+void bi_Mul_w(word* p_dst, word p_src1, word p_src2); /**** 단일 워드 곱셈 ****/
 void bi_Mul_Schoolbook_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); /**** 스쿨북 곱셈 ****/
 void bi_Mul_PS_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); /**** PS 곱셈 ****/
 //################################################################################################# 
 //                                           제곱 관련 함수 
 //#################################################################################################
-unsigned long long bi_Sqr_w(word src1_Data); /**** 단일 워드 제곱 ****/
+unsigned long long bi_Sqr_w(word p_src1); /**** 단일 워드 제곱 ****/
 void bi_Sqr_PS_zx(BIGINT** bi_dst, BIGINT* bi_src1); /**** PS 제곱 ****/
 //################################################################################################# 
 //                                           나눗셈 관련 함수 
@@ -71,6 +87,7 @@ void bi_Shift_L2R_r_bits_zx(BIGINT** bi_dst, BIGINT* bi_src, int r); /**** A >> 
 //################################################################################################# 
 //                                           지수승 관련 함수 
 //#################################################################################################
+// !!!! int n으로 해도되는지 확인 필요. BIGINT* bi_n이 필요할 수도
 void bi_Exp_L2R_zx(BIGINT** bi_dst, BIGINT* bi_src, int n); /**** Left-to-Right exponentiation ****/
 void bi_Exp_MnS_zx(BIGINT** bi_dst, BIGINT* bi_src, int n); /**** Multiply-and-Squaring exponentiation ****/
 void bi_ExpMul_L2R_zx(BIGINT** bi_dst, BIGINT* bi_src, int n); /**** Left-to-Right exponentiation mul  ****/
@@ -78,4 +95,5 @@ void bi_ExpMul_MnS_zx(BIGINT** bi_dst, BIGINT* bi_src, int n); /**** Multiply-an
 //################################################################################################# 
 //                                          모듈러 관련 함수 
 //#################################################################################################
+// !!!! bi_T를 사전 계산해주는 함수 필요함.
 void bi_Barret_Reduction(BIGINT** bi_result, BIGINT* bi_src1, BIGINT* bi_N, BIGINT* bi_T);

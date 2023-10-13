@@ -5,7 +5,7 @@ int main(){
     BIGINT* num1 = NULL;
 
     printf("=============  빅인티저 생성 중 ============== \n");
-    bi_set_by_string(&num0, NON_NEGATIVE, "fffffff0000000000000000", 16);
+    bi_set_by_string(&num0, NON_NEGATIVE, "fffffff0000000000000000", HEXDECIMAL);
     bi_print_bigint_hex(num0);
     int n = bi_get_bit_length(num0);
     printf("비트 길이 = %d\n", n);
