@@ -1,19 +1,22 @@
-#include "bring_util.h"
+#include "bring_arith.h"
 
 int main(){
     BIGINT* num0 = NULL;
     BIGINT* num1 = NULL;
-
+    BIGINT* result1 = NULL;
     printf("=============  빅인티저 생성 중 ============== \n");
-    bi_set_by_string(&num0, NON_NEGATIVE, "fffffff0000000000000000", HEXDECIMAL);
+    bi_set_by_string(&num0, NEGATIVE, "100000000000000000000000", HEXDECIMAL);
+    bi_set_by_string(&num1, NEGATIVE, "ffffffffffffffffffffffff", HEXDECIMAL);
     bi_print_bigint_hex(num0);
-    int n = bi_get_bit_length(num0);
-    printf("비트 길이 = %d\n", n);
-    bi_assign_flip_sign(&num1, num0);
     bi_print_bigint_hex(num1);
-    printf("%d ", num1->sign);
+
+    printf("=============  뺄셈 검증 예시  ============== \n");
+    BI_Sub_zxy(&result1, num0, num1);
+    bi_print_bigint_hex(result1);
+    bi_print_bigint_hex(num1);
+
     bi_delete(&num0);
     bi_delete(&num1);
-    printf("%lu", WORD_BIT_SIZE);
+    bi_delete(&result1);
     return 0;
 }

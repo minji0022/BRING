@@ -29,7 +29,6 @@ int BI_Sqr_x(BIGINT* bi_src1); // x <- x^2 제곱 함수
 int BI_Exp_x(BIGINT* bi_src, BIGINT* bi_n); // x = x^n 지수승 함수
 int BI_ExpMul_x(BIGINT* bi_src, BIGINT* bi_n); // x = n*x 스칼라 곱셈 함수
 
-
 //===============================================================================================//
 //                                       개발자용 함수 구역(코어 함수)
 //                                  사용자는 직접 사용하지 않는 함수
@@ -47,7 +46,7 @@ void bi_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); /**** 다중
 //#################################################################################################
 // !!!! word p_src -> word* p_src (포인터)이어야 할수도 있음.. 근데 굳이 아니어도..? 될듯
 // bi_Sub_w의 리턴 : 캐리
-int bi_Sub_w(word* p_dst, word p_src1, word p_src2, int carry_in); /**** 단일 워드 뺄셈 ****/
+int bi_Sub_w(word* p_dst, word p_src1, word p_src2, int borrow_in); /**** 단일 워드 뺄셈 ****/
 void bi_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); /**** 다중 워드 뺄셈 ****/
 
 

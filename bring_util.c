@@ -397,6 +397,30 @@ int bi_length_of_n(int n) {
     return length;
 }
 
+void bi_fill_zero(BIGINT* bi_src, int len) {
+    if(bi_src == NULL) {
+        return ;
+    }
+    bi_src->wordlen = bi_src->wordlen + len;
+    bi_src->p = (word*)realloc(bi_src->p, sizeof(word)*bi_src->wordlen);
+    // 아래는 realloc시 메모리 할당 오류가 나는 경우를 처리하기 위한 부분임. 
+    // 실제로는 bi_src->p = (word*)realloc(bi_src->p, sizeof(word)*new_wordlen); 
+    // 대신 아래 부분이 있어야할 것 같음. bi_fill_zero의 리턴 값을 int로 하고, 메모리 할당 실패시 bi_Add랑 bi_Sub에서
+    // 이를 확인하고 연산을 종료하든지, 다른 방식으로 연산을 진행하든지 해야할 수도?
+    /*
+    word* backupBuffer = bi_src->p;
+    if(NULL == (bi_src->p = (word*)realloc(bi_src->p, sizeof(word)*new_wordlen)))
+    {
+        bi_src->p = backupBuffer;
+        printf("Memory allocation is failed in bi_fill_zero(%p)", bi_src->p);
+        return;
+    }
+    */
+    for(int i = bi_src->wordlen-1; i >= bi_src->wordlen - len; i--) {
+        bi_src->p[i] = 0x0;
+    }
+}
+
 
 /*
 void bi_mod(BIGINT** bi_dst, BIGINT* bi_src, int r) { //unsinged int r로 할지 int r
