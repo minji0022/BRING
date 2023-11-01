@@ -1,10 +1,21 @@
 #include "bring_arith.h"
+
 //===============================================================================================//
 //                                       사용자용 함수 구역
 //                                     사용자가 직접 사용할 함수
+//===============================================================================================//
 
+/**
+* @details 두 큰 정수(BIGINT)를 더하는 연산
+* @param[out] bi_dst 덧셈 결과 (= src1 + src2)
+* @param[in] bi_src1 입력 src1
+* @param[in] bi_src2 입력 src2
+* @return Success or Error Code
+*/
 int BI_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
+    // Error: 입력이 유효하지 않은 경우 - NULL_POINTER_ERROR
     if(bi_src1 == NULL || bi_src2 == NULL) {
+        // *bi_dst == NULL 상태로 들어옴
         return NULL_POINTER_ERROR;
     }
     
@@ -24,7 +35,7 @@ int BI_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
 
     // case 3: 부호 다른 경우
     if(bi_src1->sign == NON_NEGATIVE && bi_src2->sign == NEGATIVE) {
-        // 음수가 더 절댓값이 큰 경우
+        // 음수의 절댓값이 더 큰 경우
         if(bi_compare_ABS(bi_src1, bi_src2) == -1) { 
             (*bi_dst)->sign = NEGATIVE;
             bi_Sub_zxy(bi_dst, bi_src2, bi_src1);
@@ -37,6 +48,7 @@ int BI_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
     }
     if(bi_src1->sign == NEGATIVE && bi_src2->sign == NON_NEGATIVE) {
         if (bi_compare_ABS(bi_src1, bi_src2) == 1) {
+            // 음수의 절댓값이 더 큰 경우
             (*bi_dst)->sign = NEGATIVE;
             bi_Sub_zxy(bi_dst, bi_src1, bi_src2);
             return FUNC_SUCCESS;     
@@ -59,26 +71,25 @@ int BI_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
         }
     }
 }
-//===============================================================================================//
+
 
 //===============================================================================================//
 //                                       개발자용 함수 구역
 //                                  사용자는 직접 사용하지 않는 함수
-//
-
 //===============================================================================================//
-//                                       개발자용 함수 구역
-//                                  사용자는 직접 사용하지 않는 함수
-//
 
-/**** 단일 워드 덧셈 ****/
-// bi_Add_w의 리턴 : 캐리
-// !!!! 캐리를 리턴 해주는 형식으로 할지 아니면 변수에 carry_out을 추가하고 리턴타입은 void로 할지 정해도 됨. 
+/**
+* @details 단일 워드 덧셈 Single Word Addition
+* @param[out] p_dst 단일 워드 덧셈 결과 (= src1 + src2 + carry_in)
+* @param[in] p_src1 입력 src1
+* @param[in] p_src2 입력 src2
+* @param[in] carry_in 입력 carry
+* @return int carry_out
+* @note bi_Add_w의 리턴 : carry
+*/
 int bi_Add_w(word* p_dst, word p_src1, word p_src2, int carry_in) {
     int carry_out = 0;
 
-    // 0xffffffff 수정 필요
-    // *p_dst = (p_src1 + p_src2) & 0xffffffff;
     *p_dst = (p_src1 + p_src2);
 
     if(*p_dst < p_src1) {
@@ -94,23 +105,15 @@ int bi_Add_w(word* p_dst, word p_src1, word p_src2, int carry_in) {
     return carry_out;
 }; 
 
-/**** 다중 워드 덧셈 ****/
-// 리턴 값 : void, 둘다 양수로 보고 계산, src1의 길이가 src2의 길이보다 크거나 같도록 함.
+/**
+* @details 다중 워드 덧셈 Multi Word Addition
+* @param[out] bi_dst 다중 워드 덧셈 결과 (= src1 + src2)
+* @param[in] bi_src1 입력 src1
+* @param[in] bi_src2 입력 src2
+* @return 
+* @note src1, src2 모두 양수로 보고 계산, src1의 길이가 src2의 길이보다 크거나 같도록 함.
+*/
 void bi_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
-    // // bi_src1이 0일 때
-    // if(bi_is_zero(bi_src1))
-    //     return bi_assign(bi_dst, bi_src2);
-    // // bi_src2이 0일 때
-    // if(bi_is_zero(bi_src2))
-    //     return bi_assign(bi_dst, bi_src1);
-
-    // // bi_src1이 양수이고 bi_src2가 음수일 때
-    // if((bi_src1->sign == NON_NEGATIVE) && (bi_src2->sign == NEGATIVE))
-    //     return bi_Sub_zxy(bi_dst, bi_src1, bi_src2);
-    // // bi_src1이 음수이고 bi_src2가 양수일 때 
-    // if((bi_src1->sign == NEGATIVE) && (bi_src2->sign == NON_NEGATIVE))
-    //     return bi_Sub_zxy(bi_dst, bi_src2, bi_src1);
-
     int carry = 0;
     int flag = 0;
 
@@ -124,51 +127,12 @@ void bi_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
         carry = bi_Add_w(&((*bi_dst)->p[i]), bi_src1->p[i], bi_src2->p[i], carry);
     }
 
+    // 마지막 워드 덧셈 연산 후 캐리 발생하는 경우를 위함
     ((*bi_dst)->p[bi_src1->wordlen]) = carry;
 
-    bi_refine(*bi_dst);
-
-    // // bi_src1의 길이와 bi_src2의 길이가 같을 때
-    // if((bi_src1->wordlen) == (bi_src2->wordlen)){
-    //     for(int i = 0; i < bi_src2->wordlen; i++) {
-    //         carry_in = bi_Add_w(&((*bi_dst)->p[i]), bi_src1->p[i], bi_src2->p[i], carry_in);
-    //     }
-    //     if(carry_in == 1) {
-    //         bi_dst[bi_src1->wordlen] = carry_in;
-    //     }
-    // } // bi_src1의 길이가 bi_src2의 길이보다 길 때
-    // else if((bi_src1->wordlen) > (bi_src2->wordlen)){
-    //     for(int i = 0; i < bi_src2->wordlen; i++)
-    //         carry_in = bi_Add_w(&((*bi_dst)->p[i]), bi_src1->p[i], bi_src2->p[i], carry_in);
-    //     if(carry_in == 1){
-    //         for(int i = bi_src2->wordlen; i < bi_src1->wordlen; i++){
-    //             bi_dst[i] = (bi_src1->p[i] + carry_in) & 0xffffffff;
-    //             if(carry_in == 1)
-    //                 bi_dst[bi_src1->wordlen] = carry_in;
-    //         }
-    //     }
-    //     else{
-    //         for(int i = bi_src2->wordlen; i < bi_src1->wordlen; i++)
-    //             bi_dst[i] = bi_src1->p[i];
-    //     }
-    // } // bi_src1의 길이가 bi_src2의 길이보다 짧을 때
-    // else{
-    //     for(int i = 0; i < bi_src1->wordlen; i++)
-    //         carry_in = bi_Add_w(bi_dst, bi_src2->p[i], bi_src1->p[i], carry_in);
-    //     if(carry_in == 1){
-    //         for(int i = bi_src1->wordlen; i < bi_src2->wordlen; i++){
-    //             carry_in = (bi_src2->p[i] + carry_in) & 0xffffffff;
-    //             if(carry_in == 1)
-    //                 bi_dst[bi_src2->wordlen] = carry_in;
-    //         }
-    //     }
-    //     else{
-    //         for(int i = bi_src1->wordlen; i < bi_src2->wordlen; i++)
-    //             bi_dst[i] = bi_src2->p[i];
-    //     }
-    // }
     if(flag) {
         bi_refine(bi_src2);
     }
 
+    bi_refine(*bi_dst);
 } 

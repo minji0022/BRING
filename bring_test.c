@@ -3,6 +3,7 @@
 int main(){
     BIGINT* num0 = NULL;
     BIGINT* num1 = NULL;
+    
     BIGINT* result_add = NULL;
     BIGINT* result_sub = NULL;
 
@@ -27,6 +28,6 @@ int main(){
     bi_delete(&num1);
     bi_delete(&result_add);
     bi_delete(&result_sub);
-    
+
     return 0;
 }
