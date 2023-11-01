@@ -95,7 +95,7 @@ int bi_Sub_w(word* p_dst, word p_src1, word p_src2, int borrow_in) {
 }
 
 /**** BI_Sub, BI_Add 내부에 들어갈 뺄셈 함수, 다중 워드 뺄셈 ****/
-// 리턴 값 : void, 둘다 양수로 보고 계산, src1의 길이가 src2의 길이보다 크거나 같도록함. 
+// 리턴 값 : void, 둘다 양수로 보고 계산, src1의 길이가 src2의 길이보다 크거나 같도록 함. 
 void bi_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
     int borrow = 0;
     int flag = 0;
