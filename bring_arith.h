@@ -22,7 +22,7 @@ int BI_Div_zxy(BIGINT** bi_quotient, BIGINT* bi_remainder, BIGINT* bi_src1, BIGI
 //                            유형 2. 연산대상 빅인티저에 연산 결과를 갱신하는 연산 함수
 //#################################################################################################
 // !!!! 갱신형 연산 함수들은 필요시 구현할 예정.
-int BI_Add_xy(BIGINT* bi_src1, BIGINT* bi_src2); // x <- x+y 덧셈 함수 
+int BI_Add_xy(BIGINT** bi_src1, BIGINT* bi_src2); // x <- x+y 덧셈 함수 
 int BI_Sub_xy(BIGINT* bi_src1, BIGINT* bi_src2); // x <- x-y 뺄셈 함수
 int BI_Mul_xy(BIGINT* bi_src1, BIGINT* bi_src2); // x <- x*y 곱셈 함수
 int BI_Sqr_x(BIGINT* bi_src1); // x <- x^2 제곱 함수
@@ -59,7 +59,7 @@ void bi_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); /**** 다중
 //                                           곱셈 관련 함수 
 //#################################################################################################
 // !!!!
-void bi_Mul_w(word* p_dst, word p_src1, word p_src2); /**** 단일 워드 곱셈 ****/
+void bi_Mul_w(BIGINT** bi_dst, word p_src1, word p_src2); /**** 단일 워드 곱셈 ****/
 void bi_Mul_Schoolbook_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); /**** 스쿨북 곱셈 ****/
 void bi_Mul_PS_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); /**** PS 곱셈 ****/
 //################################################################################################# 

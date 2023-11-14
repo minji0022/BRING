@@ -36,6 +36,7 @@ int bi_get_max_length(BIGINT* bi_src1, BIGINT* bi_src2); /**** 두개의 빅인�
 int bi_abs_is_one(BIGINT* bi_src); /**** 빅인티저의 절댓값이 1인지 판별하는 함수 ****/ // true 1, false 0 리턴
 int bi_length_of_n(int n); /**** 정수 n의 비트 길이 리턴하는 함수 ****/
 void bi_fill_zero(BIGINT* bi_src, int len); /**** len만큼 앞을 0으로 채우는 함수 ****/
+void bi_left_shift(BIGINT** bi_dst, BIGINT* bi_src, int r);
 /**** 이 밑부분은 아직 구현 안함 ****/
 // void bi_mod(BIGINT** bi_dst, BIGINT* bi_src, int r);
 // void bi_reset_bigint(BIGINT* bi_src); /**** 빅인티저 데이터 전체 리셋하는 함수 ****/

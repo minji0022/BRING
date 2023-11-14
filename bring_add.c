@@ -72,6 +72,18 @@ int BI_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
     }
 }
 
+/**
+* @details 두 큰 정수(BIGINT)를 더하는 연산 (갱신: src1 += src2)
+* @param[in] bi_src1 입력 src1, 출력 src1 = src1 + src2
+* @param[in] bi_src2 입력 src2
+* @return Success or Error Code
+*/
+int BI_Add_xy(BIGINT** bi_src1, BIGINT* bi_src2) {
+    BIGINT* tmp = NULL;
+    BI_Add_zxy(&tmp, *bi_src1, bi_src2);
+    bi_assign(bi_src1, tmp);
+    return FUNC_SUCCESS;
+}
 
 //===============================================================================================//
 //                                       개발자용 함수 구역

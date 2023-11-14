@@ -266,13 +266,13 @@ void array_rand(word* Dst, int wordlen) {
 void bi_set_zero(BIGINT** bi_src) {
     bi_new(bi_src, 1);
     (*bi_src)->sign = NON_NEGATIVE;
-    (*bi_src)->p[0] = 0x1;
+    (*bi_src)->p[0] = 0x0;
 }
 
 void bi_set_one(BIGINT** bi_src) {
     bi_new(bi_src, 1);
     (*bi_src)->sign = NON_NEGATIVE;
-    (*bi_src)->p[0] = 0x0;
+    (*bi_src)->p[0] = 0x1;
 }
 
 int bi_is_zero(BIGINT* bi_src) { // TRUE 1, false 0 리턴
@@ -422,6 +422,39 @@ void bi_fill_zero(BIGINT* bi_src, int len) {
     }
 }
 
+//  dst = src << r
+void bi_left_shift(BIGINT** bi_dst, BIGINT* bi_src, int r) {
+    int n = bi_src->wordlen;
+    int k = r / WORD_BIT_SIZE;
+
+    bi_new(bi_dst, n + k + 1);
+
+    for(int i = 0; i < k; i++) {
+        (*bi_dst)->p[i] = 0x0;
+    }
+    
+    // Case 1: r = wk
+    if(r % WORD_BIT_SIZE == 0) {
+        for(int i = k; i < (*bi_dst)->wordlen; i++){
+            (*bi_dst)->p[i] = bi_src->p[i-k];
+        }
+    } // Case 2: r = wk + r'
+    else {
+        int r_prime = r % WORD_BIT_SIZE;
+
+        // Case 2-1: j = 0
+        (*bi_dst)->p[k] = bi_src->p[0] << r_prime;
+
+        // Case 2-2: j = 1, ..., n - 1
+        for(int j = 1; j < n; j++) {
+            (*bi_dst)->p[j+k] = ((bi_src->p[j]) << r_prime) | ((bi_src->p[j-1]) >> (WORD_BIT_SIZE - r_prime));
+        }
+
+        // Case 2-3: j = n
+        (*bi_dst)->p[((*bi_dst)->wordlen)-1] = bi_src->p[n-1] >> (WORD_BIT_SIZE - r_prime);
+    }
+    bi_refine(*bi_dst);
+} 
 
 /*
 void bi_mod(BIGINT** bi_dst, BIGINT* bi_src, int r) { //unsinged int r로 할지 int r
