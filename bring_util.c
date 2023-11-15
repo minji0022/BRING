@@ -423,15 +423,12 @@ void bi_fill_zero(BIGINT* bi_src, int len) {
 }
 
 //  dst = src << r
+// 갱신형은 나중에 고려해보는 걸로...
 void bi_left_shift(BIGINT** bi_dst, BIGINT* bi_src, int r) {
     int n = bi_src->wordlen;
     int k = r / WORD_BIT_SIZE;
 
     bi_new(bi_dst, n + k + 1);
-
-    for(int i = 0; i < k; i++) {
-        (*bi_dst)->p[i] = 0x0;
-    }
     
     // Case 1: r = wk
     if(r % WORD_BIT_SIZE == 0) {
