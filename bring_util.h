@@ -15,6 +15,7 @@ void bi_refine(BIGINT* bi_src); /**** 불필요한 0 지우는 함수 ****/
 /* ///// 크기 비교 함수의 경우 src1이 크거나 길면 1, 같으면 0, 작으면 -1 리턴 ///// */
 // 강의 자료에서 bi_show_hex = bi_print_bigint_hex
 void bi_print_bigint_hex(BIGINT* bi_src); /**** 빅인티저 출력 함수 ****/ 
+void bi_print_bigint_hex_lb(BIGINT* bi_src); /**** 빅인티저 출력 함수 - 줄 바꿈 없이****/ 
 void bi_assign(BIGINT** bi_dst, BIGINT* bi_src); /**** bi_dst <- bi_src Copy Biginteger 부호 유지 ****/
 void bi_assign_flip_sign(BIGINT** bi_dst, BIGINT* bi_src); /**** bi_dst <- bi_src Copy Biginteger 부호 변경 ****/
 int is_valid_hex(char* str); /**** 올바르지 못한 16진수 값 들어오는지 판단 ****/ // 유효하지 않으면 에러 리턴.

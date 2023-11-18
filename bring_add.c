@@ -6,7 +6,7 @@
 //===============================================================================================//
 
 /**
-* @details 두 큰 정수(BIGINT)를 더하는 연산
+* @details [덧셈 함수] 두 큰 정수(BIGINT)를 더하는 연산
 * @param[out] bi_dst 덧셈 결과 (= src1 + src2)
 * @param[in] bi_src1 입력 src1
 * @param[in] bi_src2 입력 src2
@@ -16,6 +16,7 @@ int BI_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
     // Error: 입력이 유효하지 않은 경우 - NULL_POINTER_ERROR
     if(bi_src1 == NULL || bi_src2 == NULL) {
         // *bi_dst == NULL 상태로 들어옴
+        printf("[WARNING] : A 또는 B의 값이 존재하지 않음\n");
         return NULL_POINTER_ERROR;
     }
     
@@ -73,15 +74,18 @@ int BI_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
 }
 
 /**
-* @details 두 큰 정수(BIGINT)를 더하는 연산 (갱신: src1 += src2)
+* @details [덧셈 갱신 함수] 두 큰 정수(BIGINT)를 더하는 연산 (갱신: src1 += src2)
 * @param[in] bi_src1 입력 src1, 출력 src1 = src1 + src2
 * @param[in] bi_src2 입력 src2
 * @return Success or Error Code
 */
 int BI_Add_xy(BIGINT** bi_src1, BIGINT* bi_src2) {
     BIGINT* tmp = NULL;
+    
     BI_Add_zxy(&tmp, *bi_src1, bi_src2);
     bi_assign(bi_src1, tmp);
+
+    bi_delete(&tmp);
     return FUNC_SUCCESS;
 }
 

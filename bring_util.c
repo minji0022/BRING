@@ -58,7 +58,9 @@ int bi_set_by_string(BIGINT** bi_dst, int sign, char* str, int base) {
 
     // check invalid input
     if(is_valid_hex(str) != TRUE) {
-        return ERR_INVALID_INPUT;
+        (*bi_dst) = NULL;
+        puts("[WARNING] : Wrong String INPUT...");
+        return INVALID_CHAR_ERROR;
     }
     // convert str -> word array 
     for(int i = 0; i < wordlen; i++) {
@@ -187,10 +189,21 @@ void bi_print_bigint_hex(BIGINT* bi_src) {
     }
     printf("0x");
     for(int i = bi_src->wordlen - 1; i >= 0; i--) {
-        printf("%08x", bi_src->p[i]);
+            printf("%08x", bi_src->p[i]);
     }
     printf("\n");
 }
+
+void bi_print_bigint_hex_lb(BIGINT* bi_src) {
+    if(bi_src->sign == NEGATIVE) {
+        printf("-");
+    }
+    printf("0x");
+    for(int i = bi_src->wordlen - 1; i >= 0; i--) {
+            printf("%08x", bi_src->p[i]);
+    }
+}
+
 
 void bi_refine(BIGINT* bi_src) {
     if(bi_src == NULL) {

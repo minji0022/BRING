@@ -5,22 +5,43 @@
 //                                     사용자가 직접 사용할 함수
 //===============================================================================================//
 
+/**
+* @details [곱셈 함수] 두 큰 정수(BIGINT)를 곱하는 연산
+* @param[out] bi_dst 곱셈 결과 (= src1 * src2)
+* @param[in] bi_src1 입력 src1
+* @param[in] bi_src2 입력 src2
+* @return Success or Error Code
+*/
 int BI_Mul_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
     // Error: 입력이 유효하지 않은 경우 - NULL_POINTER_ERROR
     if(bi_src1 == NULL || bi_src2 == NULL) { 
+        printf("[WARNING] : A 또는 B의 값이 존재하지 않음\n");
         return NULL_POINTER_ERROR;
     } 
 
+    // Case 1: 두 수 중 하나라도 0인 경우, 곱셈 결과는 0.
     if(bi_is_zero(bi_src1) || bi_is_zero(bi_src2)) {
         bi_set_zero(bi_dst);
         return FUNC_SUCCESS;
     }
+    // Case 2-1: dst = 1(or -1) * src2
     if(bi_abs_is_one(bi_src1)) {
-        bi_assign(bi_dst, bi_src2);
+        if(bi_src1->sign == NEGATIVE) {
+            bi_assign_flip_sign(bi_dst, bi_src2);
+        }
+        else {
+            bi_assign(bi_dst, bi_src2);
+        }
         return FUNC_SUCCESS;
     }
+    // Case 2-2: dst = src1 * 1(or -1)
     if(bi_abs_is_one(bi_src2)) {
-        bi_assign(bi_dst, bi_src1);
+        if(bi_src2->sign == NEGATIVE) {
+            bi_assign_flip_sign(bi_dst, bi_src1);
+        }
+        else {
+            bi_assign(bi_dst, bi_src1);    
+        }
         return FUNC_SUCCESS;
     }
 
@@ -29,7 +50,7 @@ int BI_Mul_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
 
     // 추후 카라추바 곱셈으로 변경 예정
     bi_Mul_Schoolbook_zxy(bi_dst, bi_src1, bi_src2);
-
+    
     if((bi_src1->sign == NEGATIVE && bi_src2->sign == NON_NEGATIVE) || (bi_src1->sign == NON_NEGATIVE && bi_src2->sign == NEGATIVE)) {
         (*bi_dst)->sign = NEGATIVE;
     }
@@ -83,4 +104,7 @@ void bi_Mul_Schoolbook_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
             BI_Add_xy(bi_dst, lshfit_tmp);
         }
     }
+
+    // tmp variable... delete
+    bi_delete(&tmp);     bi_delete(&lshfit_tmp);
 }

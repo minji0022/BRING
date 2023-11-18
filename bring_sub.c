@@ -16,6 +16,7 @@ int BI_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2){
     // Error: 입력이 유효하지 않은 경우 - NULL_POINTER_ERROR
     if(bi_src1 == NULL || bi_src2 == NULL) { 
         // *bi_dst == NULL 상태로 들어옴
+        printf("[WARNING] : A 또는 B의 값이 존재하지 않음\n");
         return NULL_POINTER_ERROR;
     } 
 
