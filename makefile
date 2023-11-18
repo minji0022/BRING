@@ -1,3 +1,7 @@
+CC = gcc
+
+all : bring_test verify_code bignum
+
 bring_test : bignum.dylib bring_test.c
 	gcc -Wall -g bring_test.c -o bring_test bignum.dylib
 
