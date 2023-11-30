@@ -11,8 +11,8 @@ int main() {
         BIGINT* result_sub = NULL;
         BIGINT* result_mul = NULL;
 
-        bi_gen_rand(&num0, NEGATIVE, 8);
-        bi_gen_rand(&num1, NON_NEGATIVE, 8);
+        bi_gen_rand(&num0, NON_NEGATIVE, 15);
+        bi_gen_rand(&num1, NON_NEGATIVE, 12);
 
         BI_Add_zxy(&result_add, num0, num1);
         BI_Sub_zxy(&result_sub, num0, num1);

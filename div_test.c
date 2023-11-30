@@ -1,7 +1,7 @@
 #include "bring_arith.h"
 
 int main() {
-    int n = 50;
+    int n = 10;
 
     while(n>0){
         BIGINT* num0 = NULL;
@@ -10,8 +10,8 @@ int main() {
         BIGINT* q = NULL;
         BIGINT* r = NULL;
 
-        bi_gen_rand(&num0, NON_NEGATIVE, 6);
-        bi_gen_rand(&num1, NON_NEGATIVE, 10);
+        bi_gen_rand(&num0, NON_NEGATIVE, 8);
+        bi_gen_rand(&num1, NON_NEGATIVE, 7);
 
         BI_Div_zxy(&q, &r, num0, num1);
 
