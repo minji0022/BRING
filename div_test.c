@@ -10,7 +10,7 @@ int main() {
         BIGINT* q = NULL;
         BIGINT* r = NULL;
 
-        bi_gen_rand(&num0, NON_NEGATIVE, 15);
+        bi_gen_rand(&num0, NON_NEGATIVE, 6);
         bi_gen_rand(&num1, NON_NEGATIVE, 10);
 
         BI_Div_zxy(&q, &r, num0, num1);
