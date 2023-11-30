@@ -100,7 +100,7 @@ void bi_Mul_Schoolbook_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
     for(int j = 0; j < bi_src1->wordlen; j++) {
         for(int i = 0; i < bi_src2->wordlen; i++) {
             bi_Mul_w(&tmp, bi_src1->p[j], bi_src2->p[i]);
-            bi_left_shift(&lshfit_tmp, tmp, WORD_BIT_SIZE * (i + j));
+            bi_left_bit_shift_zx(&lshfit_tmp, tmp, WORD_BIT_SIZE * (i + j));
             BI_Add_xy(bi_dst, lshfit_tmp);
         }
     }

@@ -10,13 +10,15 @@ int BI_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); // z <- x+y �
 int BI_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); // z <- x-y 뺄셈 함수
 int BI_Mul_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); // z <- x*y 곱셈 함수
 int BI_Sqr_zx(BIGINT** bi_dst, BIGINT* bi_src1); // z <- x^2 제곱 함수
+int BI_Div_zxy(BIGINT** bi_quotient, BIGINT** bi_remainder, BIGINT* bi_src1, BIGINT* bi_src2); 
+
 
 // z = x^n 지수승 함수 // !!!! 모듈러 넣어줘야 안 터짐
 int BI_Exp_zx(BIGINT** bi_dst, BIGINT* bi_src, BIGINT* bi_n); 
 // z = n*x 스칼라 곱셈 함수 // !!!! 모듈러 넣어줘야 안 터짐
 int BI_ExpMul_zx(BIGINT** bi_dst, BIGINT* bi_src, BIGINT* bi_n); 
 // z*q + r = x / y 나눗셈 함수
-int BI_Div_zxy(BIGINT** bi_quotient, BIGINT* bi_remainder, BIGINT* bi_src1, BIGINT* bi_src2); 
+
 
 //################################################################################################# 
 //                            유형 2. 연산대상 빅인티저에 연산 결과를 갱신하는 연산 함수
@@ -76,12 +78,12 @@ void bi_Divc_zxy(BIGINT** bi_quotient, BIGINT** bi_remainder, BIGINT* bi_src1, B
 //################################################################################################# 
 //                                           shift 관련 함수 
 //#################################################################################################
-void bi_Shift_R2L_r_words(BIGINT* bi_src, int r); /**** A << r words ****/
-void bi_Shift_L2R_r_words(BIGINT* bi_src, int r); /**** A >> r words ****/
-void bi_Shift_R2L_r_bits_x(BIGINT* bi_src, int r); /**** A << r bits ****/
-void bi_Shift_L2R_r_bits_x(BIGINT* bi_src, int r); /**** A >> r bits ****/
-void bi_Shift_R2L_r_bits_zx(BIGINT** bi_dst, BIGINT* bi_src, int r); /**** A << r bits ****/
-void bi_Shift_L2R_r_bits_zx(BIGINT** bi_dst, BIGINT* bi_src, int r); /**** A >> r bits ****/
+void bi_left_word_shift(BIGINT* bi_src, int r); /**** A << r words ****/
+void bi_right_word_shift(BIGINT* bi_src, int r); /**** A >> r words ****/
+void bi_left_bit_shift_x(BIGINT* bi_src, int r); /**** A << r bits ****/
+void bi_right_bit_shift_x(BIGINT* bi_src, int r); /**** A >> r bits ****/
+void bi_left_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r); /**** A << r bits ****/
+void bi_right_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r); /**** A >> r bits ****/
 // !!!!! 배열만 받아서 시프트하는 연산도 구현필요할듯
 //################################################################################################# 
 //                                           지수승 관련 함수 

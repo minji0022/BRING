@@ -10,7 +10,7 @@ verify_code : bignum.dylib bring_verify_python_code.c
 	gcc -Wall -g bring_verify_python_code.c -o bring_verify bignum.dylib
 
 bignum : bring_util.c bring_add.c bring_sub.c bring_mul.c
-	gcc -shared -fPIC -o bignum.dylib bring_util.c bring_add.c bring_sub.c bring_mul.c
+	gcc -shared -fPIC -o bignum.dylib bring_util.c bring_add.c bring_sub.c bring_mul.c bring_div.c bring_arith.c
 
 clean:
 	rm bring_test

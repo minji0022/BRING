@@ -434,38 +434,6 @@ void bi_fill_zero(BIGINT* bi_src, int len) {
         bi_src->p[i] = 0x0;
     }
 }
-
-//  dst = src << r
-// 갱신형은 나중에 고려해보는 걸로...
-void bi_left_shift(BIGINT** bi_dst, BIGINT* bi_src, int r) {
-    int n = bi_src->wordlen;
-    int k = r / WORD_BIT_SIZE;
-
-    bi_new(bi_dst, n + k + 1);
-    
-    // Case 1: r = wk
-    if(r % WORD_BIT_SIZE == 0) {
-        for(int i = k; i < (*bi_dst)->wordlen; i++){
-            (*bi_dst)->p[i] = bi_src->p[i-k];
-        }
-    } // Case 2: r = wk + r'
-    else {
-        int r_prime = r % WORD_BIT_SIZE;
-
-        // Case 2-1: j = 0
-        (*bi_dst)->p[k] = bi_src->p[0] << r_prime;
-
-        // Case 2-2: j = 1, ..., n - 1
-        for(int j = 1; j < n; j++) {
-            (*bi_dst)->p[j+k] = ((bi_src->p[j]) << r_prime) | ((bi_src->p[j-1]) >> (WORD_BIT_SIZE - r_prime));
-        }
-
-        // Case 2-3: j = n
-        (*bi_dst)->p[((*bi_dst)->wordlen)-1] = bi_src->p[n-1] >> (WORD_BIT_SIZE - r_prime);
-    }
-    bi_refine(*bi_dst);
-} 
-
 /*
 void bi_mod(BIGINT** bi_dst, BIGINT* bi_src, int r) { //unsinged int r로 할지 int r
     //int w = sizeof(word)*8; // word의 비트 사이즈. 8, 16, 32, 48.. def에 정의해두고 사용하는게 맞을듯.
