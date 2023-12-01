@@ -1,16 +1,17 @@
 CC = gcc
 
-all : bring_test verify_code bignum
+all : bignum bring_test verify_code
 
 bring_test : bignum.dylib bring_test.c
 	gcc -Wall -g bring_test.c -o bring_test bignum.dylib
 
 # 검증 파이썬 코드 출력 버전
-verify_code : bignum.dylib bring_verify_python_code.c
-	gcc -Wall -g bring_verify_python_code.c -o bring_verify bignum.dylib
+verify_code : bignum.dylib bring_verify.c
+	gcc -Wall -g bring_verify.c -o bring_verify bignum.dylib
+	./bring_verify > bring_verify.py
 
-bignum : bring_util.c bring_add.c bring_sub.c bring_mul.c
-	gcc -shared -fPIC -o bignum.dylib bring_util.c bring_add.c bring_sub.c bring_mul.c bring_div.c bring_arith.c
+bignum : bring_util.c bring_add.c bring_sub.c bring_mul.c bring_arith.c bring_div.c
+	gcc -shared -fPIC -o bignum.dylib bring_util.c bring_add.c bring_sub.c bring_div.c bring_mul.c bring_arith.c
 
 clean:
-	rm bring_test
+	rm bring_test bring_verify

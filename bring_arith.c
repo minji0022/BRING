@@ -10,23 +10,23 @@ void bi_left_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r) { /**** B = A 
     
     // Case 1: r = wk
     if(r % WORD_BIT_SIZE == 0) {
-        for(int i = word_shift; i < (*bi_dst)->wordlen; i++){
-            (*bi_dst)->p[i] = bi_src->p[i-word_shift];
+        for(int i = word_shift; i < (*bi_dst)->wordlen - 1; i++){
+            (*bi_dst)->p[i] = (word)(bi_src->p[i-word_shift]);
         }
     } // Case 2: r = wk + r'
     else {
         int bit_shift = r % WORD_BIT_SIZE;
 
         // Case 2-1: j = 0
-        (*bi_dst)->p[word_shift] = bi_src->p[0] << bit_shift;
+        (*bi_dst)->p[word_shift] = (word)(bi_src->p[0] << bit_shift);
 
         // Case 2-2: j = 1, ..., n - 1
         for(int j = 1; j < n; j++) {
-            (*bi_dst)->p[j+word_shift] = ((bi_src->p[j]) << bit_shift) | ((bi_src->p[j-1]) >> (WORD_BIT_SIZE - bit_shift));
+            (*bi_dst)->p[j+word_shift] = (word)(((bi_src->p[j]) << bit_shift) | ((bi_src->p[j-1]) >> (WORD_BIT_SIZE - bit_shift)));
         }
 
         // Case 2-3: j = n
-        (*bi_dst)->p[((*bi_dst)->wordlen)-1] = bi_src->p[n-1] >> (WORD_BIT_SIZE - bit_shift);
+        (*bi_dst)->p[((*bi_dst)->wordlen)-1] = (word)(bi_src->p[n-1] >> (WORD_BIT_SIZE - bit_shift));
     }
     bi_refine(*bi_dst);
 } 

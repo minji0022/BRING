@@ -145,8 +145,3 @@ word bi_longdiv(word a1, word a0, word b) {
     }
     return q;
 }
-
-
-
-
-

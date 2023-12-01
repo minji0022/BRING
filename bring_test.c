@@ -12,8 +12,8 @@ int main(){
     // bi_set_by_string(&num0, NON_NEGATIVE, "12343202", HEXDECIMAL);
     // bi_set_by_string(&num1, NON_NEGATIVE, "403d76423", HEXDECIMAL);
     
-    int set_flag_1 = bi_set_by_string(&num0, NON_NEGATIVE, "22d6b982d07258407f63917bb38631812e5cd7737c2c2481c3e69486bb8", HEXDECIMAL);
-    int set_flag_2 = bi_set_by_string(&num1, NON_NEGATIVE, "7e3c13c8912b75381Fbe34ec439636e01267788", HEXDECIMAL);
+    int set_flag_1 = bi_set_by_string(&num0, NON_NEGATIVE, "1234567890abcdef1234567890abcdef1234567890abcdef", HEXDECIMAL);
+    int set_flag_2 = bi_set_by_string(&num1, NON_NEGATIVE, "f2144faddc497d9ef6324912fd367840ee509a2032aedb1c0a890d133b45f596", HEXDECIMAL);
     
     // 유효하지 않은 입력이 발생할 경우 오류 메시지 출력 및 프로그램 종료
     if(set_flag_1 == INVALID_CHAR_ERROR) {
@@ -28,18 +28,23 @@ int main(){
     bi_print_bigint_hex(num0);
     bi_print_bigint_hex(num1);
 
-    printf("=============  덧셈 검증 예시  ============== \n");
-    BI_Add_zxy(&result_add, num0, num1);
-    bi_print_bigint_hex(result_add);
+    // bi_left_bit_shift_zx(&result_mul, num0, 59);
 
-    printf("=============  뺄셈 검증 예시  ============== \n");
-    BI_Sub_zxy(&result_sub, num0, num1);
-    bi_print_bigint_hex(result_sub);
-
-    printf("=============  곱셈 검증 예시  ============== \n");
     BI_Mul_zxy(&result_mul, num0, num1);
     bi_print_bigint_hex(result_mul);
 
+    // printf("=============  덧셈 검증 예시  ============== \n");
+    // BI_Add_zxy(&result_add, num0, num1);
+    // bi_print_bigint_hex(result_add);
+
+    // printf("=============  뺄셈 검증 예시  ============== \n");
+    // BI_Sub_zxy(&result_sub, num0, num1);
+    // bi_print_bigint_hex(result_sub);
+
+    // printf("=============  곱셈 검증 예시  ============== \n");
+    // BI_Mul_zxy(&result_mul, num0, num1);
+    // bi_print_bigint_hex(result_mul);
+    
     bi_delete(&num0);
     bi_delete(&num1);
     bi_delete(&result_add);

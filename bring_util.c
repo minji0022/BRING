@@ -79,7 +79,7 @@ int bi_set_by_string(BIGINT** bi_dst, int sign, char* str, int base) {
         // printf("%s\n", chunk);
         
         // convert string -> hex(word)
-        word hex_tmp = (int)strtol(chunk, NULL, 16);
+        word hex_tmp = (word)strtoul(chunk, NULL, 16);
 
         // ————— check —————
         // printf("hex: %08x\n", hex_tmp);  
@@ -91,8 +91,7 @@ int bi_set_by_string(BIGINT** bi_dst, int sign, char* str, int base) {
 }
 
 /*
-int bi_set_by_string_v2(BIGINT** bi_dst, int sign, char* str, int base)
-{
+int bi_set_by_string(BIGINT** bi_dst, int sign, char* str, int base) {
     int str_len = strlen(str); // 입력된 문자열의 길이 계산
     int char_per_word = 2 * WORD_BYTE_SIZE; // 한 워드에 입력받은 char의 몇글자가 들어가는지 계산.
     int wordlen = (str_len + char_per_word - 1) / char_per_word; // 문자열 길이에 따라서 필요한 워드 개수 계산
@@ -184,13 +183,28 @@ int bi_set_by_string_v2(BIGINT** bi_dst, int sign, char* str, int base)
 //#################################################################################################
 /* ///// 크기 비교 함수의 경우 Src1이 크거나 길면 1, 같으면 0, 작으면 -1 리턴 ///// */
 void bi_print_bigint_hex(BIGINT* bi_src) {
+    int word_size = WORD_BYTE_SIZE;
+
     if(bi_src->sign == NEGATIVE) {
         printf("-");
     }
     printf("0x");
+
+#if WORD == 0
     for(int i = bi_src->wordlen - 1; i >= 0; i--) {
-            printf("%08x", bi_src->p[i]);
+            printf("%02x", bi_src->p[i]);
+        }
+#elif WORD == 1
+    for(int i = bi_src->wordlen - 1; i >= 0; i--) {
+        printf("%08x", bi_src->p[i]);
     }
+#elif WORD == 2
+    for(int i = bi_src->wordlen - 1; i >= 0; i--) {
+            printf("%016llx", bi_src->p[i]);
+    }
+#else
+
+#endif
     printf("\n");
 }
 
@@ -200,7 +214,7 @@ void bi_print_bigint_hex_lb(BIGINT* bi_src) {
     }
     printf("0x");
     for(int i = bi_src->wordlen - 1; i >= 0; i--) {
-            printf("%08x", bi_src->p[i]);
+             printf("%08x", bi_src->p[i]);
     }
 }
 

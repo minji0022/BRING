@@ -22,9 +22,17 @@
 /************** 단위 **************/
 // !!!! 나중에 사용자가 word를 선택할 수 있게 해야하는데 어떻게 해야할까??????
 //word : unsigned char (w=8) , unsigned short : (w=16), unsigned int (w=32), unsigned long long(w=64)
-typedef unsigned int word;  // !!!! --> 나중에 이부분 수정해야함.
+#define WORD 1 // !!!! --> 나중에 이부분 수정해야함.
 typedef unsigned long long ull;
 typedef unsigned char byte;
+
+#if WORD == 0
+    typedef unsigned char word;
+#elif WORD == 1
+    typedef unsigned int word;
+#elif WORD == 2
+    typedef unsigned long long word;
+#endif
 
 #define BINARY          2
 #define DECIMAL         10

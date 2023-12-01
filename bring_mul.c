@@ -66,9 +66,9 @@ int BI_Mul_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
 void bi_Mul_w(BIGINT** bi_dst, word p_src1, word p_src2){
     int w_div_2 = WORD_BIT_SIZE / 2;
 
-    word src1_0 = p_src1 & ((1 << w_div_2) - 1);
+    word src1_0 = p_src1 & (((word)1 << w_div_2) - 1);
     word src1_1 = p_src1 >> w_div_2;
-    word src2_0 = p_src2 & ((1 << w_div_2) - 1);
+    word src2_0 = p_src2 & (((word)1 << w_div_2) - 1);
     word src2_1 = p_src2 >> w_div_2;
 
     word t0 = src1_1 * src2_0;
@@ -107,4 +107,52 @@ void bi_Mul_Schoolbook_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
 
     // tmp variable... delete
     bi_delete(&tmp);     bi_delete(&lshfit_tmp);
+}
+
+void concatenateBigInt(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
+    (*bi_dst)->wordlen = bi_src1->wordlen + bi_src2->wordlen;
+    (*bi_dst)->p = (word*)realloc((*bi_dst)->p, (*bi_dst)->wordlen * sizeof(int));
+
+    for (int i = 0; i < bi_src1->wordlen; ++i) {
+        (*bi_dst)->p[i] = bi_src1->p[i];
+    }
+
+    for (int i = 0; i < bi_src2->wordlen; ++i) {
+        (*bi_dst)->p[bi_src1->wordlen + i] = bi_src2->p[i];
+    }
+}
+
+void bi_Mul_ImprovedSchoolbook_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
+    BIGINT* tmp0 = NULL;
+    BIGINT* tmp1 = NULL;
+    BIGINT* tmp = NULL;
+    BIGINT* mul_tmp0 = NULL;
+    BIGINT* mul_tmp1 = NULL;
+    BIGINT* lshfit_tmp = NULL;
+
+    bi_new(&tmp0, 0);
+    
+    bi_new(&tmp1, WORD_BIT_SIZE);
+    bi_new(&tmp, 0);
+    bi_new(&mul_tmp0, 0);
+    bi_new(&mul_tmp1, 0);
+    bi_new(&lshfit_tmp, 0);
+    
+    bi_set_zero(bi_dst);
+
+    for(int i = 0; i < 2 * bi_src2->wordlen; i++) {
+        tmp0->p = NULL;
+        memset(tmp1->p, 0, WORD_BIT_SIZE);
+        for(int k = 0; k < bi_src1->wordlen; k++) {
+            bi_Mul_w(&mul_tmp0, bi_src1->p[2*k], bi_src2->p[i]);
+            concatenateBigInt(&tmp0, tmp0, mul_tmp0);
+            tmp0->wordlen += mul_tmp0->wordlen;
+            bi_Mul_w(&mul_tmp1, bi_src1->p[2*k + 1], bi_src2->p[i]);
+            concatenateBigInt(&tmp1, tmp1, mul_tmp1);
+            tmp1->wordlen += mul_tmp1->wordlen;
+        }
+        BI_Add_zxy(&tmp, tmp0, tmp1);
+        bi_left_bit_shift_zx(&lshfit_tmp, tmp, WORD_BIT_SIZE * i);
+        BI_Add_xy(bi_dst, lshfit_tmp);
+    }
 }
