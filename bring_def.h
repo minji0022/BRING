@@ -22,7 +22,7 @@
 /************** 단위 **************/
 // !!!! 나중에 사용자가 word를 선택할 수 있게 해야하는데 어떻게 해야할까??????
 //word : unsigned char (w=8) , unsigned short : (w=16), unsigned int (w=32), unsigned long long(w=64)
-#define WORD 1 // !!!! --> 나중에 이부분 수정해야함.
+#define WORD 0 // !!!! --> 나중에 이부분 수정해야함.
 typedef unsigned long long ull;
 typedef unsigned char byte;
 
@@ -33,6 +33,20 @@ typedef unsigned char byte;
 #elif WORD == 2
     typedef unsigned long long word;
 #endif
+
+/**
+ * @brief SET VERIFY_MODE
+ * @test ${0: Verify ADD(+) Operation
+ * @test ${1: Verify SUB(-) Operation
+ * @test ${2: Verify MUL(*) Operation
+ * @test ${3: Verify DIV(/) Operation
+ * @test ${4: Verify MOD(%) Operation
+ * @test ${5: Verify SQR(**) Operation
+ * @test ${6: Verify EXP_MOD Operation
+ * @test ${7: Verify Fast REDUCTION Operation
+ */
+#define VERIFY_MODE 5
+#define REPEAT_COUNT 1000
 
 #define BINARY          2
 #define DECIMAL         10

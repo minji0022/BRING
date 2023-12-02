@@ -7,9 +7,10 @@ int main(){
     BIGINT* result_add = NULL;
     BIGINT* result_sub = NULL;
     BIGINT* result_mul = NULL;
+    BIGINT* result_sqr = NULL;
 
     printf("=============  빅인티저 생성 중 ============== \n");
-    // bi_set_by_string(&num0, NON_NEGATIVE, "12343202", HEXDECIMAL);
+    // bi_set_by_string(&num0, NON_NEGATIVE, "ffffffffffffffffffffffffffffffffff", HEXDECIMAL);
     // bi_set_by_string(&num1, NON_NEGATIVE, "403d76423", HEXDECIMAL);
     
     int set_flag_1 = bi_set_by_string(&num0, NON_NEGATIVE, "1234567890abcdef1234567890abcdef1234567890abcdef", HEXDECIMAL);
@@ -28,11 +29,6 @@ int main(){
     bi_print_bigint_hex(num0);
     bi_print_bigint_hex(num1);
 
-    // bi_left_bit_shift_zx(&result_mul, num0, 59);
-
-    BI_Mul_zxy(&result_mul, num0, num1);
-    bi_print_bigint_hex(result_mul);
-
     // printf("=============  덧셈 검증 예시  ============== \n");
     // BI_Add_zxy(&result_add, num0, num1);
     // bi_print_bigint_hex(result_add);
@@ -44,12 +40,17 @@ int main(){
     // printf("=============  곱셈 검증 예시  ============== \n");
     // BI_Mul_zxy(&result_mul, num0, num1);
     // bi_print_bigint_hex(result_mul);
-    
+
+    printf("=============  제곱 검증 예시  ============== \n");
+    BI_Sqr_zx(&result_sqr, num1);
+    bi_print_bigint_hex(result_sqr);
+
     bi_delete(&num0);
     bi_delete(&num1);
     bi_delete(&result_add);
     bi_delete(&result_sub);
     bi_delete(&result_mul);
+    bi_delete(&result_sqr);
 
     return 0;
 }

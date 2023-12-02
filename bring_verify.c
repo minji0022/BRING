@@ -1,61 +1,97 @@
 #include "bring_arith.h"
 
 int main() {
-    int n = 1000;
+    printf("print(\"\"\"  * @brief SET VERIFY_MODE\n * @test ${0: Verify ADD(+) Operation\n * @test ${1: Verify SUB(-) Operation\n * @test ${2: Verify MUL(*) Operation\n * @test ${3: Verify DIV(/) Operation\n * @test ${4: Verify MOD(%%) Operation\n * @test ${5: Verify SQR(**) Operation\n * @test ${6: Verify EXP_MOD Operation\n * @test ${7: Verify Fast REDUCTION Operation \"\"\" )\n");
+    printf("print(\" ---------------------------------------- \")\n");
+    printf("print(\"             [ Success Rate ]  \")\n");
+    printf("print(\" ---------------------------------------- \")\n");
+    printf("print(\"             VERIFY MODE : ");
+    printf("%d", VERIFY_MODE);
+    printf("\")\n");
 
-    while(n>0){
+    printf("cnt = ");
+    printf("%d\n", REPEAT_COUNT);
 
+    for(int i = 0; i < REPEAT_COUNT; i++) {
         BIGINT* num0 = NULL;
         BIGINT* num1 = NULL;
+        BIGINT* result = NULL;
         
-        BIGINT* q = NULL;
-        BIGINT* r = NULL;
-        BIGINT* res_mul = NULL;
-
         bi_gen_rand(&num0, NON_NEGATIVE, 15);
         bi_gen_rand(&num1, NON_NEGATIVE, 11);
 
-        BI_Div_zxy(&q, &r, num0, num1);
-        // /*
-        printf("print(");
+        printf("if (");
         bi_print_bigint_hex(num0);
-        printf(" // ");
+
+#if (VERIFY_MODE == 0) || (VERIFY_MODE == 1) || (VERIFY_MODE == 2) || (VERIFY_MODE == 4)
+// ----------------- ADD -----------------
+#if VERIFY_MODE == 0
+        printf(" + ");
+        BI_Add_zxy(&result, num0, num1);
+
+// ----------------- SUB -----------------
+#elif VERIFY_MODE == 1
+        printf(" - ");
+        BI_Sub_zxy(&result, num0, num1);
+        
+// ----------------- MUL -----------------
+#elif VERIFY_MODE == 2
+        printf(" * ");
+        BI_Mul_zxy(&result, num0, num1);
+
+// ----------------- MOD -----------------
+#elif VERIFY_MODE == 4
+        printf(" %% ");
+        // BI_MOD_zxy(&result, num0, num1);
+#endif
         bi_print_bigint_hex(num1);
-        printf(" == ");
+        printf(" != ");
+        bi_print_bigint_hex(result);
+        printf(") :  cnt -= 1 ");
+        puts("");
+        
+// ----------------- DIV -----------------
+#elif (VERIFY_MODE == 3)
+        BIGINT* q = NULL;
+        BIGINT* r = NULL;
+
+        printf(" // ");
+        // BI_Div_zxy(&q, &r, num0, num1);
+        bi_print_bigint_hex(num1);
+        printf(" != ");
         bi_print_bigint_hex(q);
-        printf(")");
+        printf(") :  cnt -= 1 ");
         puts("");
 
-        printf("print(");
+        printf("if (");
         bi_print_bigint_hex(num0);
         printf(" %% ");
         bi_print_bigint_hex(num1);
-        printf(" == ");
+        printf(" != ");
         bi_print_bigint_hex(r);
-        printf(")");
+        printf(") :  cnt -= 1 ");
         puts("");
-        // */
-        // BI_Mul_zxy(&res_mul, num0, num1);
 
-        // printf("print(");
-        // bi_print_bigint_hex(num0);
-        // printf(" * ");
-        // bi_print_bigint_hex(num1);
-        // printf(" == ");
-        // bi_print_bigint_hex(res_mul);
-        // printf(")");
-        // puts("");
-        // printf("%d\n", n);
-
-        n--;
-        
-        bi_delete(&num0);
-        bi_delete(&num1);
         bi_delete(&q);
         bi_delete(&r);
-        bi_delete(&res_mul);
 
+// ----------------- SQR -----------------
+#elif (VERIFY_MODE == 5)
+        printf(" ** 2 !=");
+        BI_Sqr_zx(&result, num0);
+
+        bi_print_bigint_hex(result);
+        printf(") :  cnt -= 1 ");
+        puts("");
+#endif        
+        bi_delete(&num0);
+        bi_delete(&num1);
+        bi_delete(&result);
     }
+    printf("print(\"                %%s/");
+    printf("%d", REPEAT_COUNT);
+    printf(" \"%%format(cnt))\n");
+    printf("print(\" ---------------------------------------- \")\n");
 
     return 0;
 }

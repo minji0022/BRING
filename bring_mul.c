@@ -58,6 +58,38 @@ int BI_Mul_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
     return FUNC_SUCCESS;
 }
 
+
+/**
+* @details [제곱 함수] 큰 정수(BIGINT)를 제곱하는 연산
+* @param[out] bi_dst 제곱 결과 (= src * src)
+* @param[in] bi_src 입력 src
+* @return Success or Error Code
+*/
+int BI_Sqr_zx(BIGINT** bi_dst, BIGINT* bi_src) {
+    // Error: 입력이 유효하지 않은 경우 - NULL_POINTER_ERROR
+    if (bi_src == NULL) {
+        return NULL_POINTER_ERROR;
+    } 
+
+    // Case 1: 입력이 0인 경우, 제곱 결과는 0.
+    if (bi_is_zero(bi_src)) {
+        bi_set_zero(bi_dst);
+        return FUNC_SUCCESS;
+    }
+    // Case 2: dst = (1(or -1))^2
+    if (bi_abs_is_one(bi_src)) {
+        bi_set_one(bi_dst);
+        return FUNC_SUCCESS;
+    }
+    
+    // bi_new(bi_dst, 1);
+    // printf("here");
+    bi_Sqrc_zy(bi_dst, bi_src); /* 그 외 경우 */
+    (*bi_dst)->sign = NON_NEGATIVE;
+
+    return FUNC_SUCCESS;
+}
+
 //===============================================================================================//
 //                                       개발자용 함수 구역
 //                                  사용자는 직접 사용하지 않는 함수
@@ -155,4 +187,70 @@ void bi_Mul_ImprovedSchoolbook_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_
         bi_left_bit_shift_zx(&lshfit_tmp, tmp, WORD_BIT_SIZE * i);
         BI_Add_xy(bi_dst, lshfit_tmp);
     }
+}
+
+void bi_Sqr_w(BIGINT** bi_dst, word p_src1) {
+    word A0, A1, C1, C0 = 0;
+    int w_div_2 = WORD_BIT_SIZE / 2;
+    BIGINT* C = NULL;
+    BIGINT* T = NULL;
+    BIGINT* T_tmp = NULL;
+
+    A1 = p_src1 >> w_div_2;
+    A0 = p_src1 & (((word)1 << w_div_2) - 1);
+
+    C1 = A1 * A1;
+    C0 = A0 * A0;
+
+    bi_new(&C, 2);
+    C->p[0] = C0;
+    C->p[1] = C1;
+    
+    bi_new(&T_tmp, 1);
+    T_tmp->p[0] = A0 * A1;
+    bi_left_bit_shift_zx(&T, T_tmp, w_div_2 + 1);
+    BI_Add_xy(&C, T);
+    bi_assign(bi_dst, C);
+
+    bi_delete(&C);
+    bi_delete(&T);
+    bi_delete(&T_tmp);
+}
+
+void bi_Sqrc_zy(BIGINT** bi_dst, BIGINT* bi_src1) {
+    BIGINT* C1 = NULL;
+    BIGINT* C2 = NULL;
+    BIGINT* C2_tmp = NULL;
+
+    bi_set_zero(&C1);
+    bi_set_zero(&C2);
+    for(int j = 0; j < bi_src1->wordlen; j++) {
+        BIGINT* T1 = NULL;
+        BIGINT* T1_tmp = NULL;
+
+        bi_Sqr_w(&T1, (bi_src1->p[j]));
+        bi_left_bit_shift_zx(&T1_tmp, T1, (2 * j * WORD_BIT_SIZE));
+        BI_Add_xy(&C1, T1_tmp);
+        for(int i = j + 1; i < bi_src1->wordlen; i++) {
+            BIGINT* T2 = NULL;
+            BIGINT* T2_tmp = NULL;
+
+            bi_new(&T2, 2);
+
+            bi_Mul_w(&T2, bi_src1->p[j], bi_src1->p[i]);
+            bi_left_bit_shift_zx(&T2_tmp, T2, (i + j) * WORD_BIT_SIZE);
+            BI_Add_xy(&C2, T2_tmp);
+        
+            bi_delete(&T2);
+            bi_delete(&T2_tmp);
+        }
+        bi_delete(&T1);
+        bi_delete(&T1_tmp);
+    }
+    bi_left_bit_shift_zx(&C2_tmp, C2, 1);
+    BI_Add_zxy(bi_dst, C1, C2_tmp);
+
+    bi_delete(&C1);
+    bi_delete(&C2);
+    bi_delete(&C2_tmp);
 }

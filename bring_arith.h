@@ -9,7 +9,7 @@
 int BI_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); // z <- x+y 덧셈 함수 
 int BI_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); // z <- x-y 뺄셈 함수
 int BI_Mul_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); // z <- x*y 곱셈 함수
-int BI_Sqr_zx(BIGINT** bi_dst, BIGINT* bi_src1); // z <- x^2 제곱 함수
+int BI_Sqr_zx(BIGINT** bi_dst, BIGINT* bi_src); // z <- x^2 제곱 함수
 int BI_Div_zxy(BIGINT** bi_quotient, BIGINT** bi_remainder, BIGINT* bi_src1, BIGINT* bi_src2); 
 
 
@@ -67,8 +67,9 @@ void bi_Mul_PS_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); /**** PS 
 //################################################################################################# 
 //                                           제곱 관련 함수 
 //#################################################################################################
-unsigned long long bi_Sqr_w(word p_src1); /**** 단일 워드 제곱 ****/
-void bi_Sqr_PS_zx(BIGINT** bi_dst, BIGINT* bi_src1); /**** PS 제곱 ****/
+void bi_Sqr_w(BIGINT** bi_dst, word p_src1); /**** 단일 워드 제곱 ****/
+void bi_Sqrc_zy(BIGINT** bi_dst, BIGINT* bi_src1); /**** 다중 워드 제곱 ****/
+
 //################################################################################################# 
 //                                           나눗셈 관련 함수 
 //#################################################################################################
