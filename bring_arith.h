@@ -67,6 +67,7 @@ void bi_right_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r); /**** A >> r
 //                                           지수승 관련 함수 
 //#################################################################################################
 void bi_Exp_L2R_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M); /**** Left-to-Right exponentiation ****/
+void bi_Exp_MnS_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M); /**** Multiply-and-Square exponetiation****/
 //################################################################################################# 
 //                                          Fast_reduction 관련 함수 
 //#################################################################################################

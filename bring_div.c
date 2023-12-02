@@ -8,7 +8,7 @@ int BI_Div_zxy(BIGINT** bi_quotient, BIGINT** bi_remainder, BIGINT* bi_src1, BIG
         return NULL_POINTER_ERROR;
     }   
     if (bi_src1->sign || bi_src2->sign) {
-        printf("[음수 입력 오류] 계산 대상으로 음이 아닌 정수만 입력 가능합니다\n");
+        printf("[WARNING] : 계산 대상으로 음이 아닌 정수만 입력 가능합니다\n");
         return ERR_INVALID_INPUT;
     }       
     // A < B

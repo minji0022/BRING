@@ -17,11 +17,10 @@ int main() {
         BIGINT* num1 = NULL;
         BIGINT* result = NULL;
         
-        bi_gen_rand(&num0, NON_NEGATIVE, 15);
-        bi_gen_rand(&num1, NON_NEGATIVE, 11);
+        bi_gen_rand(&num0, NON_NEGATIVE, 10);
+        bi_gen_rand(&num1, NON_NEGATIVE, 5);
 
         printf("if (");
-
 
 #if (VERIFY_MODE == 0) || (VERIFY_MODE == 1) || (VERIFY_MODE == 2) || (VERIFY_MODE == 4)
 // ----------------- ADD -----------------

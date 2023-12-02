@@ -5,6 +5,10 @@ int BI_ExpMod_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M
         printf("[WARNING] : x 또는 n 또는 M의 값이 존재하지 않음\n");
         return NULL_POINTER_ERROR;
     } 
+    if (bi_src1->sign == NEGATIVE || bi_src2->sign == NEGATIVE || bi_M->sign == NEGATIVE) {
+        printf("[WARNING] : 모듈러 지수승 값은 음이 아닌 정수만 입력 가능\n");
+        return ERR_INVALID_INPUT;
+    }
     if (bi_is_zero(bi_src2)) {
         bi_set_one(bi_dst); /* 1 <- X^0 */ /* 0^0도 1로 정의 함 */
         return FUNC_SUCCESS;
@@ -17,7 +21,8 @@ int BI_ExpMod_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M
         bi_set_zero(bi_dst); /* 0 <- 0^n (n != 0) */
         return FUNC_SUCCESS;
     }
-    bi_Exp_L2R_zx(bi_dst, bi_src1, bi_src2, bi_M); /* 이 외 나머지 */
+    //bi_Exp_L2R_zx(bi_dst, bi_src1, bi_src2, bi_M); /* 이 외 나머지 */
+    bi_Exp_MnS_zx(bi_dst, bi_src1, bi_src2, bi_M); /* 이 외 나머지 */
     // 부호 정보 할당
     if (bi_src1->sign == NEGATIVE && (bi_M->p[0] & 0x1)) { // 음수의 홀수 제곱인 경우만 결과가 음수.
         (*bi_dst)->sign = NEGATIVE;
@@ -28,7 +33,6 @@ int BI_ExpMod_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M
 
 
 //  dst = src << r
-// 갱신형은 나중에 고려해보는 걸로...
 void bi_left_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r) { /**** B = A << r bits ****/
     int n = bi_src->wordlen;
     int word_shift = r / WORD_BIT_SIZE; // word_shift == k
@@ -118,38 +122,70 @@ void bi_right_word_shift(BIGINT* bi_src, int r){ /**** A >> r words ****/
 //                                           지수승 관련 함수 
 //#################################################################################################
 void bi_Exp_L2R_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M){
+    int word_cnt = bi_src2->wordlen - 1; // 워드 인덱스
+    int bit_cnt = WORD_BIT_SIZE-1; // 하나의 워드 내에서 비트 시프트할 횟수
 
-    bi_new(bi_dst, 1);
-    (*bi_dst)->p[0] = 1;
+    bi_new(bi_dst, 1); 
+    (*bi_dst)->p[0] = 1; // bi_dst를 1로 초기화
 
-    int length = bi_get_bit_length(bi_src2);
-    int word_cnt = bi_src2->wordlen - 1;
-    int bit_cnt = WORD_BIT_SIZE-1;
-    while (word_cnt >= 0){
-        BIGINT *temp1 = NULL;
-        BIGINT *temp2 = NULL;
-
+    while (word_cnt >= 0){ // 모든 워드에서 진행
+        BIGINT *temp1 = NULL; // 연산 값들을 저장할 임시변수
+        BIGINT *temp2 = NULL; // 연산 값들을 저장할 임시변수
         //line 3
-        bi_Sqrc_zy(&temp1, *bi_dst); // temp1 = t^2
-        BI_Mod_zxy(&temp2, temp1, bi_M); // temp2 = t^2 mod M
-        bi_delete(&temp1); // temp1 비워주기.
-
+        bi_Sqrc_zy(&temp1, *bi_dst); // temp1 <- t^2
+        BI_Mod_zxy(&temp2, temp1, bi_M); // temp2 <- t^2 mod M
+        bi_delete(&temp1); // temp1 이후에 다시 사용하기 위해 비워주기.
         //line 4
-        if((bi_src2->p[word_cnt] >> bit_cnt) & 0x1 == 1){
-            bi_Mul_Schoolbook_zxy(&temp1, temp2, bi_src1); // 이 부분을 코어로 할지, 사용자 함수로 할지
-            BI_Mod_zxy(bi_dst, temp1, bi_M);
-            //bi_assign(bi_dst, temp1);
+        if((bi_src2->p[word_cnt] >> bit_cnt) & 0x1 == 1){ // n의 자릿수 비트가 1인 경우
+            bi_Mul_Schoolbook_zxy(&temp1, temp2, bi_src1); // temp1 <- t*x
+            BI_Mod_zxy(bi_dst, temp1, bi_M); // bi_dst <- t*x mod M
         }
-        else bi_assign(bi_dst, temp2);
-        bit_cnt--;
-
-        if(bit_cnt < 0) {
-            word_cnt--;
-            bit_cnt = WORD_BIT_SIZE-1;
+        else {
+            bi_assign(bi_dst, temp2); // bi_dst <- 계산해둔 t^2 mod M 복사
         }
-
+        bit_cnt--; // 하나의 워드 내에서 비트 시프트할 횟수 -1하는 작업.
+        if(bit_cnt < 0) { // 하나의 워드 내에서 비트 시프트를 다 했으면 
+            word_cnt--; // 워드 인데스 1 감소시킴
+            bit_cnt = WORD_BIT_SIZE-1; // 비트 시프트할 횟수 다시 초기화
+        }
         bi_delete(&temp1);
         bi_delete(&temp2);
-
     }
+}
+
+void bi_Exp_MnS_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M){
+    int word_cnt = bi_src2->wordlen - 1; // 워드 인덱스
+    int bit_cnt = WORD_BIT_SIZE-1; // 하나의 워드 내에서 비트 시프트할 횟수
+    BIGINT *tdst = NULL; // t1 값을 저장할 첫 번째 임시 변수
+
+    bi_new(bi_dst, 1);
+    (*bi_dst)->p[0] = 1; // bi_dst를 1로 초기화
+    bi_assign(&tdst, bi_src1); // x^n mod M 에서 n 값을 t1에 복사
+
+    while (word_cnt >= 0){ // 모든 워드에서 진행
+        BIGINT *temp0 = NULL; // t0 값을 저장할 첫 번째 임시 변수   
+        BIGINT *temp1 = NULL; // t1 값을 저장할 두 번째 임시 변수
+        
+        // line 3,4
+        if((bi_src2->p[word_cnt] >> bit_cnt) & 0x1 == 1){ // n의 자릿수 비트가 1인 경우
+            bi_Mul_Schoolbook_zxy(&temp0, *bi_dst, tdst); // temp0 <- t0*t1
+            BI_Mod_zxy(bi_dst, temp0, bi_M); // bi_dst <- t0*t1 mod M
+            bi_Sqrc_zy(&temp1, tdst); // temp1 = t1^2
+            BI_Mod_zxy(&tdst, temp1, bi_M); // tdst = t1^2 mod M
+        }
+        else {
+            bi_Mul_Schoolbook_zxy(&temp1, *bi_dst, tdst); // temp1 <- t0*t1
+            BI_Mod_zxy(&tdst, temp1, bi_M); // tdst <- to*t1 mod M
+            bi_Sqrc_zy(&temp0, *bi_dst); // temp0 = t0^2
+            BI_Mod_zxy(bi_dst, temp0, bi_M); // bi_dst = t0^2 mod M
+        }
+        bit_cnt--; // 하나의 워드 내에서 비트 시프트할 횟수 -1하는 작업.
+        if(bit_cnt < 0) { // 하나의 워드 내에서 비트 시프트를 다 했으면 
+            word_cnt--; // 워드 인데스 1 감소시킴
+            bit_cnt = WORD_BIT_SIZE-1; // 비트 시프트할 횟수 다시 초기화
+        }
+        bi_delete(&temp0);
+        bi_delete(&temp1);
+    }
+    bi_delete(&tdst);
 }
