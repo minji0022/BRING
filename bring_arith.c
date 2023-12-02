@@ -1,5 +1,32 @@
 #include "bring_arith.h"
 
+int BI_ExpMod_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M){
+    if (bi_src1 == NULL || bi_src2 == NULL || bi_M == NULL) {
+        printf("[WARNING] : x 또는 n 또는 M의 값이 존재하지 않음\n");
+        return NULL_POINTER_ERROR;
+    } 
+    if (bi_is_zero(bi_src2)) {
+        bi_set_one(bi_dst); /* 1 <- X^0 */ /* 0^0도 1로 정의 함 */
+        return FUNC_SUCCESS;
+    }
+    if (bi_is_one(bi_src1)) {
+        bi_set_one(bi_dst); /* 1 <- 1^n */
+        return FUNC_SUCCESS;
+    } 
+    if (bi_is_zero(bi_src1)) {
+        bi_set_zero(bi_dst); /* 0 <- 0^n (n != 0) */
+        return FUNC_SUCCESS;
+    }
+    bi_Exp_L2R_zx(bi_dst, bi_src1, bi_src2, bi_M); /* 이 외 나머지 */
+    // 부호 정보 할당
+    if (bi_src1->sign == NEGATIVE && (bi_M->p[0] & 0x1)) { // 음수의 홀수 제곱인 경우만 결과가 음수.
+        (*bi_dst)->sign = NEGATIVE;
+    }  
+    return FUNC_SUCCESS;
+}
+
+
+
 //  dst = src << r
 // 갱신형은 나중에 고려해보는 걸로...
 void bi_left_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r) { /**** B = A << r bits ****/
@@ -31,7 +58,6 @@ void bi_left_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r) { /**** B = A 
     bi_refine(*bi_dst);
 } 
 
-
 void bi_right_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r){ /**** B = A >> r bits ****/
     int SLen = bi_src->wordlen;
     int word_shift = r / WORD_BIT_SIZE; // r 비트를 word(32비트)로 나눈 횟수
@@ -60,7 +86,6 @@ void bi_right_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r){ /**** B = A 
     bi_refine(*bi_dst);    
 } 
 
-
 /* Shift Right-to-Left R-words */
 // 최대 범위 넘어가는거 에러뜨도록 해야하나?
 /* wordlen이 0이 될 경우, 데이터 변화가 없음. 0 판별할 때 부호정보 대신 길이 정보만 사용해야 함.*/
@@ -87,4 +112,44 @@ void bi_right_word_shift(BIGINT* bi_src, int r){ /**** A >> r words ****/
 
     bi_src->wordlen = bi_src->wordlen - r;
     bi_src->p = (word*)realloc(bi_src->p, sizeof(word)*bi_src->wordlen);
+}
+
+//################################################################################################# 
+//                                           지수승 관련 함수 
+//#################################################################################################
+void bi_Exp_L2R_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M){
+
+    bi_new(bi_dst, 1);
+    (*bi_dst)->p[0] = 1;
+
+    int length = bi_get_bit_length(bi_src2);
+    int word_cnt = bi_src2->wordlen - 1;
+    int bit_cnt = WORD_BIT_SIZE-1;
+    while (word_cnt >= 0){
+        BIGINT *temp1 = NULL;
+        BIGINT *temp2 = NULL;
+
+        //line 3
+        bi_Sqrc_zy(&temp1, *bi_dst); // temp1 = t^2
+        BI_Mod_zxy(&temp2, temp1, bi_M); // temp2 = t^2 mod M
+        bi_delete(&temp1); // temp1 비워주기.
+
+        //line 4
+        if((bi_src2->p[word_cnt] >> bit_cnt) & 0x1 == 1){
+            bi_Mul_Schoolbook_zxy(&temp1, temp2, bi_src1); // 이 부분을 코어로 할지, 사용자 함수로 할지
+            BI_Mod_zxy(bi_dst, temp1, bi_M);
+            //bi_assign(bi_dst, temp1);
+        }
+        else bi_assign(bi_dst, temp2);
+        bit_cnt--;
+
+        if(bit_cnt < 0) {
+            word_cnt--;
+            bit_cnt = WORD_BIT_SIZE-1;
+        }
+
+        bi_delete(&temp1);
+        bi_delete(&temp2);
+
+    }
 }

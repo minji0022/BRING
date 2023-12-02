@@ -4,9 +4,13 @@
 //                                     사용자가 직접 사용할 함수
 int BI_Div_zxy(BIGINT** bi_quotient, BIGINT** bi_remainder, BIGINT* bi_src1, BIGINT* bi_src2){
     if (bi_src1 == NULL || bi_src2 == NULL) {
+        printf("[WARNING] : A 또는 B의 값이 존재하지 않음\n");
         return NULL_POINTER_ERROR;
     }   
-
+    if (bi_src1->sign || bi_src2->sign) {
+        printf("[음수 입력 오류] 계산 대상으로 음이 아닌 정수만 입력 가능합니다\n");
+        return ERR_INVALID_INPUT;
+    }       
     // A < B
     if (bi_compare_bigint(bi_src1, bi_src2) == -1) {
         bi_set_zero(bi_quotient); // 몫 : 0
@@ -40,6 +44,15 @@ int BI_Div_zxy(BIGINT** bi_quotient, BIGINT** bi_remainder, BIGINT* bi_src1, BIG
     return FUNC_SUCCESS;
 }
 
+int BI_Mod_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2){
+    BIGINT* tQ = NULL;
+    BI_Div_zxy(&tQ, bi_dst, bi_src1, bi_src2);
+
+    bi_delete(&tQ);
+
+    bi_refine(*bi_dst);
+    return FUNC_SUCCESS;
+}
 //===============================================================================================//
 
 //===============================================================================================//
@@ -67,7 +80,7 @@ void bi_Divc_zxy(BIGINT** bi_quotient, BIGINT** bi_remainder, BIGINT* bi_src1, B
         return ;
     }
 
-    while (bi_src2->p[m-1]<<k < 0x80000000) {
+    while (bi_src2->p[m-1]<<k < WORD_SIZE_CHECK) {
         k++;
     }
     
@@ -102,7 +115,7 @@ void bi_Divcc_zxy(BIGINT** bi_quotient, BIGINT** bi_remainder, BIGINT* bi_src1, 
         //printf("DIVCC n=m+1인 경우 계산\n");
         if (bi_src1->p[m] == bi_src2->p[m-1]){
             //printf("DIVCC case1 계산\n");
-            (*bi_quotient)->p[0] = 0xFFFFFFFF;
+            (*bi_quotient)->p[0] = MAX_OF_WORD;
         }
         else { // longdiv 써야 함.
             //bi_quotient->p[0] = ((bi_src1->p[m]<<32) + bi_src1->p[m-1]) / bi_src2->p[m-1];
@@ -126,19 +139,19 @@ void bi_Divcc_zxy(BIGINT** bi_quotient, BIGINT** bi_remainder, BIGINT* bi_src1, 
 }
 
 word bi_longdiv(word a1, word a0, word b) {
-    word x = 0x80000000;
+    word x = WORD_SIZE_CHECK;
     word q = 0;
     word r = a1;
 
-    for (int i = 31; i >= 0; i--) {
-        if (r >= 0x80000000) {
-            q = q + (x >> (31-i));
+    for (int i = WORD_BIT_SIZE-1; i >= 0; i--) {
+        if (r >= WORD_SIZE_CHECK) {
+            q = q + (x >> (WORD_BIT_SIZE-1-i));
             r = (r << 1) + ((a0 >> i) & 0x1) - b;
         }
         else {
             r = (r << 1) + ((a0 >> i) & 0x1);
             if (r >= b) {
-                q = q + (x >> (31-i));
+                q = q + (x >> (WORD_BIT_SIZE-1-i));
                 r = r - b;
             }
         }

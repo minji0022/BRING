@@ -15,23 +15,29 @@
 #define NEGATIVE        1
 
 // 2048bit = 256byte...
-// !!!! word 하나당 4바이트 저장하니까 2048비트까지 저장하려면 MAX_BINT_LEN : 64로 하면됨.
-// 정적 메모리 할당 방식에서 사용하던 값 : 배열의 길이.
-#define MAX_BINT_LEN 64
+// MAX_BINT_LEN : 1워드가 32비트로 고정된 정적 메모리 할당 방식에서 사용하던 값임 : 배열의 길이.
+// !!!! word 하나당 4바이트 저장하니까 2048비트까지 저장하려면 MAX_BINT_LEN : 64로 하면됨. 
+// #define MAX_BINT_LEN 64
 
 /************** 단위 **************/
 // !!!! 나중에 사용자가 word를 선택할 수 있게 해야하는데 어떻게 해야할까??????
 //word : unsigned char (w=8) , unsigned short : (w=16), unsigned int (w=32), unsigned long long(w=64)
-#define WORD 0 // !!!! --> 나중에 이부분 수정해야함.
+#define WORD 2 // !!!! --> 나중에 이부분 수정해야함.
 typedef unsigned long long ull;
 typedef unsigned char byte;
 
 #if WORD == 0
     typedef unsigned char word;
+    #define MAX_OF_WORD 0xff
+    #define WORD_SIZE_CHECK 0x80
 #elif WORD == 1
     typedef unsigned int word;
+    #define MAX_OF_WORD 0xffffffff
+    #define WORD_SIZE_CHECK 0x80000000
 #elif WORD == 2
     typedef unsigned long long word;
+    #define MAX_OF_WORD 0xffffffffffffffff
+    #define WORD_SIZE_CHECK 0x8000000000000000
 #endif
 
 /**
@@ -45,14 +51,14 @@ typedef unsigned char byte;
  * @test ${6: Verify EXP_MOD Operation
  * @test ${7: Verify Fast REDUCTION Operation
  */
-#define VERIFY_MODE 5
+#define VERIFY_MODE 6
 #define REPEAT_COUNT 1000
 
 #define BINARY          2
 #define DECIMAL         10
 #define HEXDECIMAL      16
-#define WORD_BYTE_SIZE (sizeof(word)) // 워드의 바이트 사이즈 // 1,2,4,8 바이트 가능함.
-#define WORD_BIT_SIZE (sizeof(word)*8) // 워드의 비트 사이즈 bit length of a word (w ∈ {8, 16, 32, 64})
+#define WORD_BYTE_SIZE (sizeof(word)) // 워드의 바이트 사이즈 
+#define WORD_BIT_SIZE (sizeof(word)*8) // 워드의 비트 사이즈 bit length of a word (w ∈ {8, 32, 64})
 
 /************** 함수들의 작동 여부 확인을 위한 definitions **************/
 #define TRUE                       1
