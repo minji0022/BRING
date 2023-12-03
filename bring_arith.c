@@ -189,3 +189,56 @@ void bi_Exp_MnS_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi
     }
     bi_delete(&tdst);
 }
+
+//################################################################################################# 
+//                                           지수승 관련 함수 
+//#################################################################################################
+// R = A mod N,   0 < R < W^n.. 길이 최대 n
+// T : 사전 계산
+// T = BI_DIV(T, W^(2n), N) .. W = 2^32 .. W^(2n) = 2^(64n) = 1 << 64*n = 0x10000000000000000 << n
+void bi_Barret_Reduction(BIGINT* bi_dst, BIGINT* bi_src, BIGINT* bi_N, BIGINT* bi_T){
+    bi_set_zero(&bi_dst);
+    int n = bi_N->wordlen;
+    bi_dst->wordlen = n;
+    int s1 = (n-1) << 5;
+    int s2 = (n+1) << 5;
+ 
+    BIGINT* tQ1 = NULL;
+    BIGINT* tQ2 = NULL;
+    BIGINT* tQ3 = NULL;
+    BIGINT* tR1 = NULL;
+    BIGINT* W = NULL;
+    BIGINT* W_2n = NULL;
+    BIGINT* r = NULL;
+    BIGINT* quo = NULL;
+
+    bi_new(&tQ1, MAX_BINT_LEN);
+    bi_new(&tQ2, MAX_BINT_LEN);
+    bi_new(&tQ3, MAX_BINT_LEN);
+    bi_new(&tR1, MAX_BINT_LEN);
+    bi_set_by_string(&W, NON_NEGATIVE, "10000000000000000", 16);
+
+    bi_left_bit_shift_zx(&W_2n, W, n);
+    bi_print_bigint_hex(W_2n);
+    // BI_Div_zxy(&bi_T, &r, W_2n, bi_N);
+    bi_print_bigint_hex(bi_N);
+    BI_Div_zxy(&quo, &r, W_2n, bi_N);
+    bi_print_bigint_hex(quo);
+    
+    bi_right_bit_shift_zx(&tQ1, bi_src, s1); // line 1
+    // bi_print_bigint_hex(tQ1);
+    BI_Mul_zxy(&tQ2, tQ1, bi_T); // line 2
+    // bi_print_bigint_hex(tQ2);
+    bi_right_bit_shift_zx(&tQ3, tQ2, s2); // line 3
+    // bi_print_bigint_hex(tQ3);
+    BI_Mul_zxy(&tR1, bi_N, tQ3); // line 4
+    // bi_print_bigint_hex(tR1);
+    BI_Sub_zxy(&bi_dst, bi_src, tR1); // line 5
+    bi_print_bigint_hex(bi_dst);
+    
+    while (bi_compare_bigint(bi_dst, bi_N) >= 0) {
+        BI_Sub_zxy(&tR1, bi_dst, bi_N);
+        //bi_dst->wordlen = tR1->wordlen;
+        array_copy(bi_dst->p, tR1->p, tR1->wordlen);
+    }
+}
