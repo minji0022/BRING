@@ -136,7 +136,7 @@ void bi_Exp_L2R_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi
         BI_Mod_zxy(&temp2, temp1, bi_M); // temp2 <- t^2 mod M
         bi_delete(&temp1); // temp1 이후에 다시 사용하기 위해 비워주기.
         //line 4
-        if((bi_src2->p[word_cnt] >> bit_cnt) & 0x1 == 1){ // n의 자릿수 비트가 1인 경우
+        if(((bi_src2->p[word_cnt] >> bit_cnt) & 0x1) == 1){ // n의 자릿수 비트가 1인 경우
             bi_Mul_Schoolbook_zxy(&temp1, temp2, bi_src1); // temp1 <- t*x
             BI_Mod_zxy(bi_dst, temp1, bi_M); // bi_dst <- t*x mod M
         }
@@ -167,7 +167,7 @@ void bi_Exp_MnS_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi
         BIGINT *temp1 = NULL; // t1 값을 저장할 두 번째 임시 변수
         
         // line 3,4
-        if((bi_src2->p[word_cnt] >> bit_cnt) & 0x1 == 1){ // n의 자릿수 비트가 1인 경우
+        if(((bi_src2->p[word_cnt] >> bit_cnt) & 0x1) == 1){ // n의 자릿수 비트가 1인 경우
             bi_Mul_Schoolbook_zxy(&temp0, *bi_dst, tdst); // temp0 <- t0*t1
             BI_Mod_zxy(bi_dst, temp0, bi_M); // bi_dst <- t0*t1 mod M
             bi_Sqrc_zy(&temp1, tdst); // temp1 = t1^2
