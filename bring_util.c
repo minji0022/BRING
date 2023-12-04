@@ -462,9 +462,6 @@ void bi_fill_zero(BIGINT* bi_src, int len) {
 void reductionOf2(BIGINT** bi_dst, BIGINT* bi_src, int r){
     
     int wk = bi_src->wordlen * WORD_BIT_SIZE;
-    printf("wk = %d * %d = %d \n", bi_src->wordlen, WORD_BIT_SIZE, wk);
-
-    
     //printf("k = %d >> %d = %d\n", r, SHIFT_SIZE, k);
 
     if (r >= WORD_BIT_SIZE * bi_src->wordlen) {
@@ -476,7 +473,6 @@ void reductionOf2(BIGINT** bi_dst, BIGINT* bi_src, int r){
         int k = r >> SHIFT_SIZE;
         bi_new(bi_dst, k);
         array_copy((*bi_dst)->p, bi_src->p, k);
-        printf("here\n");
         return ;
     }
 

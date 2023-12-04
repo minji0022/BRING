@@ -49,8 +49,8 @@ int BI_Mul_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
     bi_new(bi_dst, (bi_src1->wordlen + bi_src2->wordlen + 1));
 
     // 추후 카라추바 곱셈으로 변경 예정
-    //bi_Mul_Schoolbook_zxy(bi_dst, bi_src1, bi_src2);
-    bi_Mul_Karatsuba(bi_dst, bi_src1, bi_src2, 8);
+    bi_Mul_Schoolbook_zxy(bi_dst, bi_src1, bi_src2);
+    //bi_Mul_Karatsuba(bi_dst, bi_src1, bi_src2, 4);
     
     if((bi_src1->sign == NEGATIVE && bi_src2->sign == NON_NEGATIVE) || (bi_src1->sign == NON_NEGATIVE && bi_src2->sign == NEGATIVE)) {
         (*bi_dst)->sign = NEGATIVE;
@@ -286,28 +286,31 @@ void bi_Mul_Karatsuba(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, int fla
     BIGINT *S = NULL, *S0 = NULL, *S1 = NULL;
 
     if (flag >= bi_get_min_length(bi_src1, bi_src2)) {
-        BI_Mul_zxy(bi_dst, bi_src1, bi_src2); 
+        // printf("over here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n \n");
+        bi_Mul_Schoolbook_zxy(bi_dst, bi_src1, bi_src2);
+        // printf("DONE!\n");
+        return ;
     }
 
     int l = (bi_get_max_length(bi_src1, bi_src2) + 1) >> 1;
     //int lw = l << SHIFT_SIZE;
     int lw = l * WORD_BIT_SIZE;
     
-    printf("************ lw = %d ***************\n", lw);
+    // printf("************ lw = %d ***************\n", lw);
     bi_right_bit_shift_zx(&A1, bi_src1, lw); // A1 <- A >> lw
     reductionOf2(&A0, bi_src1, lw); // A0 <- A mod 2^lw
     bi_right_bit_shift_zx(&B1, bi_src2, lw); // B1 <- B >> lw
     reductionOf2(&B0, bi_src2, lw); // B0 <- B mod 2^lw
 
-    printf("************************************\n");
-    bi_print_bigint_hex(A1);
-    bi_print_bigint_hex(B1);
+    // printf("************************************\n");
+    // bi_print_bigint_hex(A1);
+    // bi_print_bigint_hex(B1);
     
-    printf("flag : %d,     A1's wordlen' : %d,     B1's wordlen : %d\n", flag, A1->wordlen, B1->wordlen);
-    bi_print_bigint_hex(*bi_dst);
+    // printf("flag : %d,     A1's wordlen' : %d,     B1's wordlen : %d\n", flag, A1->wordlen, B1->wordlen);
+    //bi_print_bigint_hex(*bi_dst);
 
     bi_Mul_Karatsuba(&T1, A1, B1, flag); // T1 <- A1*B1
-    printf("Not here\n");
+    // printf("Not here\n");
     bi_Mul_Karatsuba(&T0, A0, B0, flag); // T0 <- A0*B0
 
     bi_left_word_shift_zx(&T1_1, T1, l<<1); // T1_1 <- T1 << 2lw
@@ -327,7 +330,6 @@ void bi_Mul_Karatsuba(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, int fla
     BI_Add_xy(&S, T0); // S <- S + T1
     bi_left_word_shift(S, l); // S <- S <<lw
     BI_Add_zxy(bi_dst, temp_C, S); // C <- C + S
-
 
     bi_delete(&temp_C); bi_delete(&temp_mul);
     bi_delete(&A0); bi_delete(&A1);
