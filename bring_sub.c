@@ -89,6 +89,17 @@ int BI_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2){
     return FUNC_ERROR;
 }
 
+int BI_Sub_xy(BIGINT** bi_src1, BIGINT* bi_src2) {
+    BIGINT* tmp = NULL;
+    
+    BI_Sub_zxy(&tmp, *bi_src1, bi_src2);
+    bi_assign(bi_src1, tmp);
+
+    bi_delete(&tmp);
+    return FUNC_SUCCESS;
+}
+
+
 //===============================================================================================//
 //                                       개발자용 함수 구역
 //                                  사용자는 직접 사용하지 않는 함수

@@ -13,17 +13,18 @@ int BI_Sqr_zx(BIGINT** bi_dst, BIGINT* bi_src); // z <- x^2 제곱 함수
 int BI_Div_zxy(BIGINT** bi_quotient, BIGINT** bi_remainder, BIGINT* bi_src1, BIGINT* bi_src2);
 int BI_Mod_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); // z <- x % y 모듈러 함수
 int BI_ExpMod_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M);  // z = x^n 지수승 함수
+int BI_Barret_Reduction(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_N, BIGINT* bi_T); // Barret Reduction
+
+
 
 //################################################################################################# 
 //                            유형 2. 연산대상 빅인티저에 연산 결과를 갱신하는 연산 함수
 //#################################################################################################
 // !!!! 갱신형 연산 함수들은 필요시 구현할 예정.
-int BI_Add_xy(BIGINT** bi_src1, BIGINT* bi_src2); // x <- x+y 덧셈 함수 
-int BI_Sub_xy(BIGINT** bi_src1, BIGINT* bi_src2); // x <- x+y 뺄셈 함수 
-int BI_Mul_xy(BIGINT** bi_src1, BIGINT* bi_src2); // x <- x+y 곱셈 함수 
-int BI_Sqr_xy(BIGINT** bi_src2); // x <- x^2 제곱 함수 
-
-
+int BI_Add_xy(BIGINT** bi_src1, BIGINT* bi_src); // x<-x+y 
+int BI_Sub_xy(BIGINT** bi_src1, BIGINT* bi_src); // x<-x-y 
+int BI_Mul_xy(BIGINT** bi_src1, BIGINT* bi_src); //  x<-x*y 
+int BI_Sqr_x(BIGINT** bi_src); // x <- x^2  
 
 //===============================================================================================//
 //                                       개발자용 함수 구역(코어 함수)
@@ -70,7 +71,7 @@ void bi_right_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r); /**** A >> r
 void bi_Exp_L2R_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M); /**** Left-to-Right exponentiation ****/
 void bi_Exp_MnS_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M); /**** Multiply-and-Square exponetiation****/
 //################################################################################################# 
-//                                          Fast_reduction 관련 함수 
+//                                       Fast Reduction 관련 함수 
 //#################################################################################################
-// !!!! bi_T를 사전 계산해주는 함수 필요함.
-void bi_Barret_Reduction(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_N, BIGINT* bi_T);
+// !!!! bi_T를 사전 계산해주는 함수.
+void bi_BR_pre_computed(BIGINT** bi_T, BIGINT* bi_N);

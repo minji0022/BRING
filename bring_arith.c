@@ -1,5 +1,9 @@
 #include "bring_arith.h"
 
+//===============================================================================================//
+//                                       사용자용 함수 구역
+//                                     사용자가 직접 사용할 함수
+//===============================================================================================//
 int BI_ExpMod_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M){
     if (bi_src1 == NULL || bi_src2 == NULL || bi_M == NULL) {
         printf("[WARNING] : x 또는 n 또는 M의 값이 존재하지 않음\n");
@@ -29,9 +33,55 @@ int BI_ExpMod_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M
     }  
     return FUNC_SUCCESS;
 }
+// R = A mod N,   0 < R < W^n.. 길이 최대 n
+// A : 2n 이하 워드 정수, N : n워드 정수. wordlen = n
+// T : 사전 계산
+int BI_Barret_Reduction(BIGINT** bi_dst, BIGINT* bi_src, BIGINT* bi_N, BIGINT* bi_T){
+    if (bi_src == NULL || bi_N == NULL || bi_T == NULL) {
+        printf("[WARNING] : bi_src 또는 bi_N 또는 bi_T의 값이 존재하지 않음\n");
+        return NULL_POINTER_ERROR;
+    }
 
+    if (bi_src->sign == NEGATIVE || bi_N->sign == NEGATIVE || bi_T->sign == NEGATIVE) {
+        printf("[WARNING] : Barret Reduction 값은 음이 아닌 정수만 입력 가능\n");
+        return ERR_INVALID_INPUT;
+    }    
 
+    int n = bi_N->wordlen; 
 
+    if (bi_src->wordlen > (bi_N->wordlen << 1)) {
+        printf("[WARNING] : bi_src의 워드 길이는 bi_N 워드 길이의 2배 이하이어야 합니다.\n");
+        printf("현재 bi_N의 워드 길이 : %d, bi_src의 워드 길이 : %d\n", n, bi_src->wordlen);
+        return SIZE_ERROR;
+    }
+
+    BIGINT* Q_hat1 = NULL;
+    BIGINT* Q_hat2 = NULL;
+    BIGINT* temp_R = NULL;
+
+    bi_right_bit_shift_zx(&Q_hat1, bi_src, (n-1) << SHIFT_SIZE); // Q_hat1 <-  A >> w(n-1)
+    BI_Mul_xy(&Q_hat1, bi_T); // Q_hat1 <- Q_hat * T
+    bi_right_bit_shift_zx(&Q_hat2, Q_hat1, (n+1) << SHIFT_SIZE); // Q_hat2 <- Q_hat1 >> w(n-1)
+    BI_Mul_zxy(&temp_R, bi_N, Q_hat2); // temp_R <- N * Q_hat2
+    BI_Sub_zxy(bi_dst, bi_src, temp_R); // R <- A - R;
+
+    bi_delete(&Q_hat1);
+    bi_delete(&Q_hat2);
+    bi_delete(&temp_R);
+
+    while (bi_compare_bigint(*bi_dst, bi_N) >= 0) {
+        BI_Sub_xy(bi_dst, bi_N); // R <- R - N
+    }
+
+    return FUNC_SUCCESS;
+}
+
+//===============================================================================================//
+
+//===============================================================================================//
+//                                       개발자용 함수 구역
+//                                  사용자는 직접 사용하지 않는 함수
+//
 //  dst = src << r
 void bi_left_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r) { /**** B = A << r bits ****/
     int n = bi_src->wordlen;
@@ -136,7 +186,7 @@ void bi_Exp_L2R_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi
         BI_Mod_zxy(&temp2, temp1, bi_M); // temp2 <- t^2 mod M
         bi_delete(&temp1); // temp1 이후에 다시 사용하기 위해 비워주기.
         //line 4
-        if((bi_src2->p[word_cnt] >> bit_cnt) & 0x1 == 1){ // n의 자릿수 비트가 1인 경우
+        if(((bi_src2->p[word_cnt] >> bit_cnt) & 0x1) == 1){ // n의 자릿수 비트가 1인 경우
             bi_Mul_Schoolbook_zxy(&temp1, temp2, bi_src1); // temp1 <- t*x
             BI_Mod_zxy(bi_dst, temp1, bi_M); // bi_dst <- t*x mod M
         }
@@ -167,7 +217,7 @@ void bi_Exp_MnS_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi
         BIGINT *temp1 = NULL; // t1 값을 저장할 두 번째 임시 변수
         
         // line 3,4
-        if((bi_src2->p[word_cnt] >> bit_cnt) & 0x1 == 1){ // n의 자릿수 비트가 1인 경우
+        if(((bi_src2->p[word_cnt] >> bit_cnt) & 0x1) == 1){ // n의 자릿수 비트가 1인 경우
             bi_Mul_Schoolbook_zxy(&temp0, *bi_dst, tdst); // temp0 <- t0*t1
             BI_Mod_zxy(bi_dst, temp0, bi_M); // bi_dst <- t0*t1 mod M
             bi_Sqrc_zy(&temp1, tdst); // temp1 = t1^2
@@ -192,11 +242,30 @@ void bi_Exp_MnS_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi
 
 
 //################################################################################################# 
-//                                           Fast Reduction 관련 함수 
+//                                      Fast Reduction 관련 함수
 //#################################################################################################
+void bi_BR_pre_computed(BIGINT** bi_T, BIGINT* bi_N){
+    
+    BIGINT* bi_W_2n = NULL;
+    BIGINT* temp = NULL;
+    bi_set_one(&bi_W_2n);
+    bi_left_word_shift(bi_W_2n, 2*bi_N->wordlen);
+    BI_Div_zxy(bi_T, &temp, bi_W_2n, bi_N);
+    bi_delete(&bi_W_2n);
+    bi_delete(&temp);    
+     
+    // int n = bi_N->wordlen;
+    // int size = WORD_BIT_SIZE * n * 2;
+    // BIGINT* bi_W_2n = NULL;
+    // BIGINT* temp = NULL;
 
-// R = A mod N,   0 < R < W^n.. 길이 최대 n
-// T : 사전 계산
-// T = BI_DIV(T, W^(2n), N) .. W = 2^32 .. W^(2n) = 2^(64n) = 1 << 64*n = 0x10000000000000000 << n
-void bi_Barret_Reduction(BIGINT** bi_dst, BIGINT* bi_src, BIGINT* bi_N, BIGINT* bi_T){
+    // bi_set_one(&temp);
+    // bi_left_bit_shift_zx(&bi_W_2n, temp, size);
+    // bi_delete(&temp);
+
+    // BI_Div_zxy(bi_T, &temp, bi_W_2n, bi_N);
+
+    // bi_delete(&bi_W_2n);
+    // bi_delete(&temp);
+
 }

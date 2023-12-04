@@ -58,6 +58,15 @@ int BI_Mul_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
     return FUNC_SUCCESS;
 }
 
+int BI_Mul_xy(BIGINT** bi_src1, BIGINT* bi_src2) {
+    BIGINT* tmp = NULL;
+    
+    BI_Mul_zxy(&tmp, *bi_src1, bi_src2);
+    bi_assign(bi_src1, tmp);
+
+    bi_delete(&tmp);
+    return FUNC_SUCCESS;
+}
 
 /**
 * @details [제곱 함수] 큰 정수(BIGINT)를 제곱하는 연산
@@ -90,6 +99,15 @@ int BI_Sqr_zx(BIGINT** bi_dst, BIGINT* bi_src) {
     return FUNC_SUCCESS;
 }
 
+int BI_Sqr_x(BIGINT** bi_src) {
+    BIGINT* tmp = NULL;
+    
+    BI_Sqr_zx(&tmp, *bi_src);
+    bi_assign(bi_src, tmp);
+
+    bi_delete(&tmp);
+    return FUNC_SUCCESS;
+}
 //===============================================================================================//
 //                                       개발자용 함수 구역
 //                                  사용자는 직접 사용하지 않는 함수

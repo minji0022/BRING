@@ -3,7 +3,7 @@
 int main(){
     BIGINT* num0 = NULL;
     BIGINT* num1 = NULL;
-    BIGINT* numT = NULL;
+    //BIGINT* numT = NULL;
     
     BIGINT* result_add = NULL;
     BIGINT* result_sub = NULL;
@@ -48,7 +48,7 @@ int main(){
     // bi_print_bigint_hex(result_sqr);
 
     printf("=============  바렛 검증 예시  ============== \n");
-    bi_Barret_Reduction(result_bar, num0, num1, numT);
+    //bi_Barret_Reduction(result_bar, num0, num1, numT);
     // bi_print_bigint_hex(result_bar);
 
     bi_delete(&num0);
