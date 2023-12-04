@@ -409,6 +409,16 @@ int bi_get_max_length(BIGINT* bi_src1, BIGINT* bi_src2){
     }
 }
 
+int bi_get_min_length(BIGINT* bi_src1, BIGINT* bi_src2){
+    int result = bi_compare_length(bi_src1, bi_src2);
+    if(result == 1) {
+        return bi_src2->wordlen;
+    }
+    else {
+        return bi_src1->wordlen;
+    }
+}
+
 int bi_abs_is_one(BIGINT* bi_src){ // 절댓값이 1이면 1, 아니면 0 리턴
     if(bi_src->wordlen == 1 && bi_src->p[0] == 1) {
         return 1;
@@ -448,16 +458,32 @@ void bi_fill_zero(BIGINT* bi_src, int len) {
         bi_src->p[i] = 0x0;
     }
 }
-/*
-void bi_mod(BIGINT** bi_dst, BIGINT* bi_src, int r) { //unsinged int r로 할지 int r
-    //int w = sizeof(word)*8; // word의 비트 사이즈. 8, 16, 32, 48.. def에 정의해두고 사용하는게 맞을듯.
-    //WORD_BIT_SIZE
-    int wordLen = bi_src->wordlen; // 강의 자료에서 n.
-    
-    bi_new(bi_dst, wordLen); //
-    (*bi_dst)->sign = bi_src->sign;
-    if (r >= WORD_BIT_SIZE*wordLen) {
 
+void reductionOf2(BIGINT** bi_dst, BIGINT* bi_src, int r){
+    
+    int wk = bi_src->wordlen * WORD_BIT_SIZE;
+    printf("wk = %d * %d = %d \n", bi_src->wordlen, WORD_BIT_SIZE, wk);
+
+    
+    //printf("k = %d >> %d = %d\n", r, SHIFT_SIZE, k);
+
+    if (r >= WORD_BIT_SIZE * bi_src->wordlen) {
+        bi_assign(bi_dst, bi_src);
+        return ;
     }
+
+    else if (r % WORD_BIT_SIZE == 0 && ( r/WORD_BIT_SIZE < bi_src->wordlen)) {
+        int k = r >> SHIFT_SIZE;
+        bi_new(bi_dst, k);
+        array_copy((*bi_dst)->p, bi_src->p, k);
+        printf("here\n");
+        return ;
+    }
+
+    else {
+        //bi_new(bi_dst, )
+        printf("bi_dst is not allocated \n");
+        return ; // 나머지는 사용 안함. 필요시 구현
+    }
+    
 }
-*/

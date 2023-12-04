@@ -47,6 +47,7 @@ void bi_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); /**** 다중
 //#################################################################################################
 void bi_Mul_w(BIGINT** bi_dst, word p_src1, word p_src2); /**** 단일 워드 곱셈 ****/
 void bi_Mul_Schoolbook_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); /**** 스쿨북 곱셈 ****/
+void bi_Mul_Karatsuba(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, int flag); /**** 카라츄바 곱셈 ****/
 //################################################################################################# 
 //                                           제곱 관련 함수 
 //#################################################################################################
@@ -63,6 +64,8 @@ void bi_Divc_zxy(BIGINT** bi_quotient, BIGINT** bi_remainder, BIGINT* bi_src1, B
 //#################################################################################################
 void bi_left_word_shift(BIGINT* bi_src, int r); /**** A << r words ****/
 void bi_right_word_shift(BIGINT* bi_src, int r); /**** A >> r words ****/
+void bi_left_word_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r); /**** A << r words ****/
+void bi_right_word_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r); /**** A >> r words ****/
 void bi_left_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r); /**** A << r bits ****/
 void bi_right_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r); /**** A >> r bits ****/
 //################################################################################################# 

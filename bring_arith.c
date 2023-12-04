@@ -158,14 +158,39 @@ void bi_left_word_shift(BIGINT* bi_src, int r){  /**** A << r words ****/
     }
 }
 
+void bi_left_word_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r){  /**** A << r words ****/
+    int s_wordlen = bi_src->wordlen;
+    int i;
+    int d_wordlen = bi_src->wordlen + r;
+
+    bi_new(bi_dst, d_wordlen);
+
+    for (i = s_wordlen - 1; i >= 0; i--){    /* a[wordlen + r - 1] ... a[r] 채우기 */
+        (*bi_dst)->p[i + r] = bi_src->p[i];
+    }
+    for (i = 0; i < r; i++){    /* a[r - 1] ... a[0] 채우기 */
+        (*bi_dst)->p[i] = 0;
+    }
+}
+
 /* Shift Left-to-Right R-words */
 void bi_right_word_shift(BIGINT* bi_src, int r){ /**** A >> r words ****/
-    for (int i = 0; i < bi_src->wordlen; i++){
+    for (int i = 0; i < bi_src->wordlen-r; i++){
         bi_src->p[i] = bi_src->p[r + i];
     }
 
     bi_src->wordlen = bi_src->wordlen - r;
     bi_src->p = (word*)realloc(bi_src->p, sizeof(word)*bi_src->wordlen);
+}
+
+void bi_right_word_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r){ /**** A >> r words ****/
+    int i = 0;
+    bi_new(bi_dst, bi_src->wordlen - r);
+
+    for (; r < (*bi_dst)->wordlen; r++){
+        (*bi_dst)->p[i] = bi_src->p[r];
+        i++;
+    }
 }
 
 //################################################################################################# 
