@@ -24,7 +24,7 @@
  * @test ${6: Verify EXP_MOD Operation
  * @test ${7: Verify Fast REDUCTION Operation
  */
-#define VERIFY_MODE 6
+#define VERIFY_MODE 5
 
 /**
  * @brief 연산 구현 정확성 검증 / 성능 측정(속도 측정) 설정

@@ -150,7 +150,7 @@ void bi_Mul_Schoolbook_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
     for(int j = 0; j < bi_src1->wordlen; j++) {
         for(int i = 0; i < bi_src2->wordlen; i++) {
             bi_Mul_w(&tmp, bi_src1->p[j], bi_src2->p[i]);
-            bi_left_bit_shift_zx(&lshfit_tmp, tmp, WORD_BIT_SIZE * (i + j));
+            bi_left_bit_shift_zx(&lshfit_tmp, tmp, (i + j) << SHIFT_SIZE);
             BI_Add_xy(bi_dst, lshfit_tmp);
         }
     }
@@ -209,7 +209,7 @@ void bi_Mul_ImprovedSchoolbook_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_
 
 void bi_Sqr_w(BIGINT** bi_dst, word p_src1) {
     word A0, A1, C1, C0 = 0;
-    int w_div_2 = WORD_BIT_SIZE / 2;
+    int w_div_2 = WORD_BIT_SIZE >> 1;
     BIGINT* C = NULL;
     BIGINT* T = NULL;
     BIGINT* T_tmp = NULL;
@@ -247,7 +247,9 @@ void bi_Sqrc_zy(BIGINT** bi_dst, BIGINT* bi_src1) {
         BIGINT* T1_tmp = NULL;
 
         bi_Sqr_w(&T1, (bi_src1->p[j]));
-        bi_left_bit_shift_zx(&T1_tmp, T1, (2 * j * WORD_BIT_SIZE));
+        bi_left_bit_shift_zx(&T1_tmp, T1, (j << (1 + SHIFT_SIZE)));
+        //bi_left_bit_shift_zx(&T1_tmp, T1, (2 * j * WORD_BIT_SIZE));
+
         BI_Add_xy(&C1, T1_tmp);
         for(int i = j + 1; i < bi_src1->wordlen; i++) {
             BIGINT* T2 = NULL;
@@ -256,7 +258,8 @@ void bi_Sqrc_zy(BIGINT** bi_dst, BIGINT* bi_src1) {
             bi_new(&T2, 2);
 
             bi_Mul_w(&T2, bi_src1->p[j], bi_src1->p[i]);
-            bi_left_bit_shift_zx(&T2_tmp, T2, (i + j) * WORD_BIT_SIZE);
+            bi_left_bit_shift_zx(&T2_tmp, T2, (i + j) << SHIFT_SIZE);
+            //bi_left_bit_shift_zx(&T2_tmp, T2, (i + j) * WORD_BIT_SIZE);
             BI_Add_xy(&C2, T2_tmp);
         
             bi_delete(&T2);
@@ -272,3 +275,5 @@ void bi_Sqrc_zy(BIGINT** bi_dst, BIGINT* bi_src1) {
     bi_delete(&C2);
     bi_delete(&C2_tmp);
 }
+
+//void bi_Mul_Karatsuba(BIGINT** bi_dst, )
