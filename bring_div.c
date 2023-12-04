@@ -2,6 +2,15 @@
 //===============================================================================================//
 //                                       사용자용 함수 구역
 //                                     사용자가 직접 사용할 함수
+/** 
+ * @brief BI_Div_zxy 함수는 두 큰 정수를 나누는 연산을 수행
+ * @details 이 함수는 두 큰 정수를 나누어 몫과 나머지를 계산
+ * @param[out] bi_quotient - 나누기의 결과로 얻어진 몫이 저장될 BIGINT 포인터의 포인터
+ * @param[out] bi_remainder - 나누기의 결과로 얻어진 나머지가 저장될 BIGINT 포인터의 포인터
+ * @param[in] bi_src1 - 나누어질 큰 정수인 BIGINT 구조체
+ * @param[in] bi_src2 - 나누는 큰 정수인 BIGINT 구조체
+ * @return 성공 시 FUNC_SUCCESS를 반환하고, 오류가 발생한 경우 오류 코드를 반환
+ */
 int BI_Div_zxy(BIGINT** bi_quotient, BIGINT** bi_remainder, BIGINT* bi_src1, BIGINT* bi_src2){
     if (bi_src1 == NULL || bi_src2 == NULL) {
         printf("[WARNING] : A 또는 B의 값이 존재하지 않음\n");
@@ -43,7 +52,14 @@ int BI_Div_zxy(BIGINT** bi_quotient, BIGINT** bi_remainder, BIGINT* bi_src1, BIG
     bi_refine(*bi_quotient);
     return FUNC_SUCCESS;
 }
-
+/** 
+ * @brief BI_Mod_zxy 함수는 큰 정수의 모듈러 연산을 수행
+ * @details 이 함수는 큰 정수를 다른 큰 정수로 나눈 나머지를 계산
+ * @param[out] bi_dst - 모듈러 연산의 결과로 얻어진 나머지가 저장될 BIGINT 포인터의 포인터
+ * @param[in] bi_src1 - 나누어질 큰 정수인 BIGINT 구조체
+ * @param[in] bi_src2 - 나누는 큰 정수인 BIGINT 구조체
+ * @return 성공 시 FUNC_SUCCESS를 반환하고, 오류가 발생한 경우 오류 코드를 반환
+ */
 int BI_Mod_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2){
     BIGINT* tQ = NULL;
     BI_Div_zxy(&tQ, bi_dst, bi_src1, bi_src2);
@@ -59,10 +75,14 @@ int BI_Mod_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2){
 //                                       개발자용 함수 구역
 //                                  사용자는 직접 사용하지 않는 함수
 //
-/*
-A(bi_src1)의 길이는 m+1
-B(bi_src2)의 길이는 m 이 되게끔 넣어줌.
-*/
+/**
+ * @brief bi_Divc_zxy 함수는 큰 정수의 모듈러 연산을 수행
+ * @details 이 함수는 큰 정수를 다른 큰 정수로 나눈 몫과 나머지를 계산
+ * @param[out] bi_quotient - 나누기의 결과로 얻어진 몫이 저장될 BIGINT 포인터의 포인터
+ * @param[out] bi_remainder - 나누기의 결과로 얻어진 나머지가 저장될 BIGINT 포인터의 포인터
+ * @param[in] bi_src1 - 나누어질 큰 정수인 BIGINT 구조체. (bi_src1)의 길이는 m+1
+ * @param[in] bi_src2 - 나누는 큰 정수인 BIGINT 구조체. (bi_src2)의 길이는 m 이 되게끔 넣어줌.
+ */
 void bi_Divc_zxy(BIGINT** bi_quotient, BIGINT** bi_remainder, BIGINT* bi_src1, BIGINT* bi_src2){
     bi_new(bi_quotient, 1);
 
@@ -96,7 +116,14 @@ void bi_Divc_zxy(BIGINT** bi_quotient, BIGINT** bi_remainder, BIGINT* bi_src1, B
     bi_delete(&tQ); // 이 부분들 필요한지 고민해봐야 함.
     bi_delete(&tR); // 이 부분들 필요한지 고민해봐야 함.   
 }
-
+/**
+ * @brief bi_Divcc_zxy 함수는 큰 정수의 몫과 나머지를 계산
+ * @details 이 함수는 큰 정수를 다른 큰 정수로 나눈 몫과 나머지를 계산
+ * @param[out] bi_quotient - 나누기의 결과로 얻어진 몫이 저장될 BIGINT 포인터의 포인터
+ * @param[out] bi_remainder - 나누기의 결과로 얻어진 나머지가 저장될 BIGINT 포인터의 포인터
+ * @param[in] bi_src1 - 나누어질 큰 정수인 BIGINT 구조체
+ * @param[in] bi_src2 - 나누는 큰 정수인 BIGINT 구조체
+ */
 void bi_Divcc_zxy(BIGINT** bi_quotient, BIGINT** bi_remainder, BIGINT* bi_src1, BIGINT* bi_src2){
     int n = bi_src1->wordlen; // A의 길이
     int m = bi_src2->wordlen; // B의 길이
@@ -137,7 +164,14 @@ void bi_Divcc_zxy(BIGINT** bi_quotient, BIGINT** bi_remainder, BIGINT* bi_src1, 
     bi_delete(&tR); // 이 부분들 필요한지 고민해봐야 함.   
     
 }
-
+/**
+ * @brief bi_longdiv 함수는 두 워드의 나눗셈을 수행
+ * @details 이 함수는 두 워드의 나눗셈 연산을 수행하여 몫을 반환
+ * @param[in] a1 - 높은 자리 워드
+ * @param[in] a0 - 낮은 자리 워드
+ * @param[in] b - 나눌 수
+ * @return 나눗셈의 몫을 반환
+ */
 word bi_longdiv(word a1, word a0, word b) {
     word x = WORD_SIZE_CHECK;
     word q = 0;
