@@ -1,36 +1,276 @@
+#include <stdio.h>
+#include <time.h>
 #include "bring_arith.h"
 
+void add_test() { 
+    double bench = 0.0;
 
-void Add_test() {
+    for(int i = 0; i < REPEAT_COUNT; i++) {
+        BIGINT* num0 = NULL;
+        BIGINT* num1 = NULL;
+        BIGINT* result = NULL;
+
+        bi_gen_rand(&num0, SRC1_SIGN, SRC1_WORD_SIZE);
+        bi_gen_rand(&num1, SRC2_SIGN, SRC2_WORD_SIZE);
+
+        clock_t start = clock();
+        BI_Add_zxy(&result, num0, num1);
+        clock_t end = clock();
+        bench += (double)(end - start) / CLOCKS_PER_SEC;
         
-        //time T=0; // 시간 누적할 변수
+        printf("if (");
+        bi_print_bigint_hex(num0);
+        printf(" + ");
+        bi_print_bigint_hex(num1);
+        printf(" != ");
+        bi_print_bigint_hex(result);
+        printf(") :  cnt -= 1 ");
+        puts("");   
 
-        for(int i = 0; i < REPEAT_COUNT; i++) {
-                BIGINT* num0 = NULL;
-                BIGINT* num1 = NULL;
-                BIGINT* result = NULL;
-                
-                bi_gen_rand(&num0, NON_NEGATIVE, 10);
-                bi_gen_rand(&num1, NON_NEGATIVE, 5);
-                
-                // 시간 측정 시작
-                BI_Add_zxy(&result, num0, num1); 
-                // 시간 측정 종료 
-                // 시간들 for문 동안 계속 누적
-                printf("if (");
-                bi_print_bigint_hex(num0);
-                printf(" + ");
-                bi_print_bigint_hex(num1);
-                printf(" != ");
-                bi_print_bigint_hex(result);
-                printf(") :  cnt -= 1 ");
-                puts("");    
+        bi_delete(&num0);
+        bi_delete(&num1);
+        bi_delete(&result);
+    }
 
-                bi_delete(&num0);
-                bi_delete(&num1);
-                bi_delete(&result);
-        }   
-    
+#if BENCHMARK_FLAG == 1
+        printf("print(\" 소요 시간 : ");
+        printf("%f", bench/REPEAT_COUNT);
+        printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
+#endif
+}
+
+void sub_test() { 
+    double bench = 0.0;
+
+    for(int i = 0; i < REPEAT_COUNT; i++) {
+        BIGINT* num0 = NULL;
+        BIGINT* num1 = NULL;
+        BIGINT* result = NULL;
+
+        bi_gen_rand(&num0, SRC1_SIGN, SRC1_WORD_SIZE);
+        bi_gen_rand(&num1, SRC2_SIGN, SRC2_WORD_SIZE);
+
+        clock_t start = clock();
+        BI_Sub_zxy(&result, num0, num1);
+        clock_t end = clock();
+        bench += (double)(end - start) / CLOCKS_PER_SEC;
+        
+        printf("if (");
+        bi_print_bigint_hex(num0);
+        printf(" - ");
+        bi_print_bigint_hex(num1);
+        printf(" != ");
+        bi_print_bigint_hex(result);
+        printf(") :  cnt -= 1 ");
+        puts("");   
+
+        bi_delete(&num0);
+        bi_delete(&num1);
+        bi_delete(&result);
+    }
+
+#if BENCHMARK_FLAG == 1
+        printf("print(\" 소요 시간 : ");
+        printf("%f", bench/REPEAT_COUNT);
+        printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
+#endif
+}
+
+void mul_test() { 
+    double bench = 0.0;
+
+    for(int i = 0; i < REPEAT_COUNT; i++) {
+        BIGINT* num0 = NULL;
+        BIGINT* num1 = NULL;
+        BIGINT* result = NULL;
+
+        bi_gen_rand(&num0, SRC1_SIGN, SRC1_WORD_SIZE);
+        bi_gen_rand(&num1, SRC2_SIGN, SRC2_WORD_SIZE);
+
+        clock_t start = clock();
+        BI_Mul_zxy(&result, num0, num1);
+        clock_t end = clock();
+        bench += (double)(end - start) / CLOCKS_PER_SEC;
+        
+        printf("if (");
+        bi_print_bigint_hex(num0);
+        printf(" * ");
+        bi_print_bigint_hex(num1);
+        printf(" != ");
+        bi_print_bigint_hex(result);
+        printf(") :  cnt -= 1 ");
+        puts("");   
+
+        bi_delete(&num0);
+        bi_delete(&num1);
+        bi_delete(&result);
+    }
+
+#if BENCHMARK_FLAG == 1
+        printf("print(\" 소요 시간 : ");
+        printf("%f", bench/REPEAT_COUNT);
+        printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
+#endif
+}
+
+void div_test() { 
+    double bench = 0.0;
+
+    for(int i = 0; i < REPEAT_COUNT; i++) {
+        BIGINT* num0 = NULL;
+        BIGINT* num1 = NULL;
+        BIGINT* q = NULL;
+        BIGINT* r = NULL;
+
+        bi_gen_rand(&num0, SRC1_SIGN, SRC1_WORD_SIZE);
+        bi_gen_rand(&num1, SRC2_SIGN, SRC2_WORD_SIZE);
+
+        clock_t start = clock();
+        BI_Div_zxy(&q, &r, num0, num1);
+        clock_t end = clock();
+        bench += (double)(end - start) / CLOCKS_PER_SEC;
+        
+        printf("if (");
+        bi_print_bigint_hex(num0);
+        printf(" // ");
+        bi_print_bigint_hex(num1);
+        printf(" != ");
+        bi_print_bigint_hex(q);
+        printf(") :  cnt -= 1 ");
+        puts("");   
+
+        printf("if (");
+        bi_print_bigint_hex(num0);
+        printf(" %% ");
+        bi_print_bigint_hex(num1);
+        printf(" != ");
+        bi_print_bigint_hex(r);
+        printf(") :  cnt -= 1 ");
+        puts("");
+
+        bi_delete(&q);
+        bi_delete(&r);
+        bi_delete(&num0);
+        bi_delete(&num1);
+    }
+
+#if BENCHMARK_FLAG == 1
+        printf("print(\" 소요 시간 : ");
+        printf("%f", bench/REPEAT_COUNT);
+        printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
+#endif
+}
+
+void mod_test() { 
+    double bench = 0.0;
+
+    for(int i = 0; i < REPEAT_COUNT; i++) {
+        BIGINT* num0 = NULL;
+        BIGINT* num1 = NULL;
+        BIGINT* result = NULL;
+
+        bi_gen_rand(&num0, SRC1_SIGN, SRC1_WORD_SIZE);
+        bi_gen_rand(&num1, SRC2_SIGN, SRC2_WORD_SIZE);
+
+        clock_t start = clock();
+        BI_Mod_zxy(&result, num0, num1);
+        clock_t end = clock();
+        bench += (double)(end - start) / CLOCKS_PER_SEC;
+        
+        printf("if (");
+        bi_print_bigint_hex(num0);
+        printf(" %% ");
+        bi_print_bigint_hex(num1);
+        printf(" != ");
+        bi_print_bigint_hex(result);
+        printf(") :  cnt -= 1 ");
+        puts("");   
+
+        bi_delete(&num0);
+        bi_delete(&num1);
+        bi_delete(&result);
+    }
+
+#if BENCHMARK_FLAG == 1
+        printf("print(\" 소요 시간 : ");
+        printf("%f", bench/REPEAT_COUNT);
+        printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
+#endif
+}
+
+void sqr_test() { 
+    double bench = 0.0;
+
+    for(int i = 0; i < REPEAT_COUNT; i++) {
+        BIGINT* num0 = NULL;
+        BIGINT* result = NULL;
+
+        bi_gen_rand(&num0, SRC1_SIGN, SRC1_WORD_SIZE);
+        
+        clock_t start = clock();
+        BI_Sqr_zx(&result, num0);
+        clock_t end = clock();
+        bench += (double)(end - start) / CLOCKS_PER_SEC;
+        
+        printf("if (");
+        bi_print_bigint_hex(num0);
+        printf(" ** 2 !=");
+        bi_print_bigint_hex(result);
+        printf(") :  cnt -= 1 ");
+        puts("");   
+
+        bi_delete(&num0);
+        bi_delete(&result);
+    }
+
+#if BENCHMARK_FLAG == 1
+        printf("print(\" 소요 시간 : ");
+        printf("%f", bench/REPEAT_COUNT);
+        printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
+#endif
+}
+
+void exp_mod_test() { 
+    double bench = 0.0;
+
+    for(int i = 0; i < REPEAT_COUNT; i++) {
+        BIGINT* num0 = NULL;
+        BIGINT* num1 = NULL;
+        BIGINT* result = NULL;
+        BIGINT* M = NULL;
+
+        bi_gen_rand(&num0, SRC1_SIGN, SRC1_WORD_SIZE);
+        bi_gen_rand(&num1, SRC2_SIGN, SRC2_WORD_SIZE);
+        bi_gen_rand(&M, NON_NEGATIVE, 7);
+
+        clock_t start = clock();
+        BI_ExpMod_zx(&result, num0, num1, M);
+        clock_t end = clock();
+        bench += (double)(end - start) / CLOCKS_PER_SEC;
+        
+        printf("if (");
+        printf("pow(");
+        bi_print_bigint_hex(num0);
+        printf(", ");
+        bi_print_bigint_hex(num1);
+        printf(", ");
+        bi_print_bigint_hex(M);
+        printf(") != ");
+        bi_print_bigint_hex(result);
+        printf(") : cnt -=1");
+        puts("");
+
+        bi_delete(&num0);
+        bi_delete(&num1);
+        bi_delete(&result);
+        bi_delete(&M);
+    }
+
+#if BENCHMARK_FLAG == 1
+        printf("print(\" 소요 시간 : ");
+        printf("%f", bench/REPEAT_COUNT);
+        printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
+#endif
 }
 
 int main() {
@@ -45,105 +285,37 @@ int main() {
     printf("cnt = ");
     printf("%d\n", REPEAT_COUNT);
 
-    for(int i = 0; i < REPEAT_COUNT; i++) {
-        BIGINT* num0 = NULL;
-        BIGINT* num1 = NULL;
-        BIGINT* result = NULL;
-        
-        bi_gen_rand(&num0, NON_NEGATIVE, 10);
-        bi_gen_rand(&num1, NON_NEGATIVE, 5);
-
-        printf("if (");
-
-#if (VERIFY_MODE == 0) || (VERIFY_MODE == 1) || (VERIFY_MODE == 2) || (VERIFY_MODE == 4)
 // ----------------- ADD -----------------
 #if VERIFY_MODE == 0
-        bi_print_bigint_hex(num0);
-        printf(" + ");
-        BI_Add_zxy(&result, num0, num1);
+        add_test();        
 
 // ----------------- SUB -----------------
 #elif VERIFY_MODE == 1
-        bi_print_bigint_hex(num0);
-        printf(" - ");
-        BI_Sub_zxy(&result, num0, num1);
+        sub_test();
         
 // ----------------- MUL -----------------
 #elif VERIFY_MODE == 2
-        bi_print_bigint_hex(num0);
-        printf(" * ");
-        BI_Mul_zxy(&result, num0, num1);
+        mul_test();
+
+// ----------------- DIV -----------------
+#elif (VERIFY_MODE == 3)
+        div_test();
 
 // ----------------- MOD -----------------
 #elif VERIFY_MODE == 4
-        bi_print_bigint_hex(num0);
-        printf(" %% ");
-        BI_Mod_zxy(&result, num0, num1);
-#endif
-        bi_print_bigint_hex(num1);
-        printf(" != ");
-        bi_print_bigint_hex(result);
-        printf(") :  cnt -= 1 ");
-        puts("");
+        mod_test();
         
-// ----------------- DIV -----------------
-#elif (VERIFY_MODE == 3)
-        BIGINT* q = NULL;
-        BIGINT* r = NULL;
-
-        bi_print_bigint_hex(num0);
-        printf(" // ");
-        BI_Div_zxy(&q, &r, num0, num1);
-        bi_print_bigint_hex(num1);
-        printf(" != ");
-        bi_print_bigint_hex(q);
-        printf(") :  cnt -= 1 ");
-        puts("");
-
-        printf("if (");
-        bi_print_bigint_hex(num0);
-        printf(" %% ");
-        bi_print_bigint_hex(num1);
-        printf(" != ");
-        bi_print_bigint_hex(r);
-        printf(") :  cnt -= 1 ");
-        puts("");
-
-        bi_delete(&q);
-        bi_delete(&r);
-
 // ----------------- SQR -----------------
 #elif (VERIFY_MODE == 5)
-        bi_print_bigint_hex(num0);
-        printf(" ** 2 !=");
-        BI_Sqr_zx(&result, num0);
+        sqr_test();
 
-        bi_print_bigint_hex(result);
-        printf(") :  cnt -= 1 ");
-        puts("");
-
-#elif (VERIFY_MODE == 6) // EXP_MOD Operation
-        BIGINT* M = NULL;
-        bi_gen_rand(&M, NON_NEGATIVE, 7);
-
-        printf("pow(");
-        BI_ExpMod_zx(&result, num0, num1, M);
-        bi_print_bigint_hex(num0);
-        printf(", ");
-        bi_print_bigint_hex(num1);
-        printf(", ");
-        bi_print_bigint_hex(M);
-        printf(") != ");
-        bi_print_bigint_hex(result);
-        printf(") : cnt -=1");
-        puts("");
-        bi_delete(&M);
-
+// ----------------- EXP_MOD -----------------
+#elif (VERIFY_MODE == 6) 
+        exp_mod_test();
 #endif        
-        bi_delete(&num0);
-        bi_delete(&num1);
-        bi_delete(&result);
-    }
+    
+    
+    
     printf("print(\"                %%s/");
     printf("%d", REPEAT_COUNT);
     printf(" \"%%format(cnt))\n");
