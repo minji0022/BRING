@@ -51,7 +51,7 @@ typedef unsigned char byte;
  * @test ${6: Verify EXP_MOD Operation
  * @test ${7: Verify Fast REDUCTION Operation
  */
-#define VERIFY_MODE 6
+#define VERIFY_MODE 0
 #define REPEAT_COUNT 200
 
 #define BINARY          2

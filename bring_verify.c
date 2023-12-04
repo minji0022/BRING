@@ -27,7 +27,8 @@ int main() {
 #if VERIFY_MODE == 0
         bi_print_bigint_hex(num0);
         printf(" + ");
-        BI_Add_zxy(&result, num0, num1);
+        //BI_Add_zxy(&result, num0, num1);
+        BI_Add_xy(&num0, num1);
 
 // ----------------- SUB -----------------
 #elif VERIFY_MODE == 1
@@ -49,7 +50,7 @@ int main() {
 #endif
         bi_print_bigint_hex(num1);
         printf(" != ");
-        bi_print_bigint_hex(result);
+        bi_print_bigint_hex(num0);
         printf(") :  cnt -= 1 ");
         puts("");
         
