@@ -3,11 +3,13 @@
 int main(){
     BIGINT* num0 = NULL;
     BIGINT* num1 = NULL;
+    BIGINT* numT = NULL;
     
     BIGINT* result_add = NULL;
     BIGINT* result_sub = NULL;
     BIGINT* result_mul = NULL;
     BIGINT* result_sqr = NULL;
+    BIGINT* result_bar = NULL;
 
     printf("=============  빅인티저 생성 중 ============== \n");
     // bi_set_by_string(&num0, NON_NEGATIVE, "ffffffffffffffffffffffffffffffffff", HEXDECIMAL);
@@ -41,9 +43,13 @@ int main(){
     // BI_Mul_zxy(&result_mul, num0, num1);
     // bi_print_bigint_hex(result_mul);
 
-    printf("=============  제곱 검증 예시  ============== \n");
-    BI_Sqr_zx(&result_sqr, num1);
-    bi_print_bigint_hex(result_sqr);
+    // printf("=============  제곱 검증 예시  ============== \n");
+    // BI_Sqr_zx(&result_sqr, num1);
+    // bi_print_bigint_hex(result_sqr);
+
+    printf("=============  바렛 검증 예시  ============== \n");
+    bi_Barret_Reduction(result_bar, num0, num1, numT);
+    // bi_print_bigint_hex(result_bar);
 
     bi_delete(&num0);
     bi_delete(&num1);
@@ -51,6 +57,7 @@ int main(){
     bi_delete(&result_sub);
     bi_delete(&result_mul);
     bi_delete(&result_sqr);
+    bi_delete(&result_bar);
 
     return 0;
 }
