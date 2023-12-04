@@ -189,3 +189,11 @@ void bi_Exp_MnS_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi
     }
     bi_delete(&tdst);
 }
+
+
+// R = A mod N,   0 < R < W^n.. 길이 최대 n
+// T : 사전 계산
+// T = BI_DIV(T, W^(2n), N) .. W = 2^32 .. W^(2n) = 2^(64n) = 1 << 64*n = 0x10000000000000000 << n
+void bi_Barret_Reduction(BIGINT** bi_dst, BIGINT* bi_src, BIGINT* bi_N, BIGINT* bi_T){
+
+}

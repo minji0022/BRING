@@ -72,4 +72,4 @@ void bi_Exp_MnS_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi
 //                                          Fast_reduction 관련 함수 
 //#################################################################################################
 // !!!! bi_T를 사전 계산해주는 함수 필요함.
-void bi_Barret_Reduction(BIGINT** bi_result, BIGINT* bi_src1, BIGINT* bi_N, BIGINT* bi_T);
+void bi_Barret_Reduction(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_N, BIGINT* bi_T);
