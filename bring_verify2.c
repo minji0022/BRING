@@ -273,6 +273,48 @@ void exp_mod_test() {
 #endif
 }
 
+void barr_test() { 
+    double bench = 0.0;
+
+    for(int i = 0; i < REPEAT_COUNT; i++) {
+        BIGINT* A = NULL;
+        BIGINT* N = NULL;
+        BIGINT* T = NULL;
+        BIGINT* R = NULL;
+
+        bi_gen_rand(&A, SRC1_SIGN, SRC1_WORD_SIZE);
+        bi_gen_rand(&N, SRC2_SIGN, SRC2_WORD_SIZE);
+
+        // Pre-Computation
+        bi_BR_pre_computed(&T, N);
+
+        clock_t start = clock();
+        BI_Barret_Reduction(&R, A, N, T);
+        clock_t end = clock();
+        bench += (double)(end - start) / CLOCKS_PER_SEC;
+
+        printf("if (");
+        bi_print_bigint_hex(A);
+        printf(" %% ");
+        bi_print_bigint_hex(N);
+        printf(" != ");
+        bi_print_bigint_hex(R);
+        printf(") :  cnt -= 1 ");
+        puts("");   
+
+        bi_delete(&A);
+        bi_delete(&N);
+        bi_delete(&R);
+        bi_delete(&T);
+    }
+
+#if BENCHMARK_FLAG == 1
+        printf("print(\" 소요 시간 : ");
+        printf("%f", bench/REPEAT_COUNT);
+        printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
+#endif
+}
+
 int main() {
     printf("print(\"\"\"  * @brief SET VERIFY_MODE\n * @test ${0: Verify ADD(+) Operation\n * @test ${1: Verify SUB(-) Operation\n * @test ${2: Verify MUL(*) Operation\n * @test ${3: Verify DIV(/) Operation\n * @test ${4: Verify MOD(%%) Operation\n * @test ${5: Verify SQR(**) Operation\n * @test ${6: Verify EXP_MOD Operation\n * @test ${7: Verify Fast REDUCTION Operation \"\"\" )\n");
     printf("print(\" ---------------------------------------- \")\n");
@@ -312,10 +354,13 @@ int main() {
 // ----------------- EXP_MOD -----------------
 #elif (VERIFY_MODE == 6) 
         exp_mod_test();
+
+// ------------- Barr. Reduction -------------
+#elif (VERIFY_MODE == 7) 
+        barr_test();
+
 #endif        
-    
-    
-    
+
     printf("print(\"                %%s/");
     printf("%d", REPEAT_COUNT);
     printf(" \"%%format(cnt))\n");
