@@ -21,10 +21,11 @@ int BI_Barret_Reduction(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_N, BIGINT* 
 //                            유형 2. 연산대상 빅인티저에 연산 결과를 갱신하는 연산 함수
 //#################################################################################################
 // !!!! 갱신형 연산 함수들은 필요시 구현할 예정.
-int BI_Add_xy(BIGINT** bi_src1, BIGINT* bi_src); // x<-x+y 
-int BI_Sub_xy(BIGINT** bi_src1, BIGINT* bi_src); // x<-x-y 
-int BI_Mul_xy(BIGINT** bi_src1, BIGINT* bi_src); //  x<-x*y 
+int BI_Add_xy(BIGINT** bi_src1, BIGINT* bi_src2); // x<-x+y 
+int BI_Sub_xy(BIGINT** bi_src1, BIGINT* bi_src2); // x<-x-y 
+int BI_Mul_xy(BIGINT** bi_src1, BIGINT* bi_src2); //  x<-x*y 
 int BI_Sqr_x(BIGINT** bi_src); // x <- x^2  
+int BI_Mod_xy(BIGINT** bi_src1, BIGINT* bi_src2); // x <- x % y
 
 //===============================================================================================//
 //                                       개발자용 함수 구역(코어 함수)

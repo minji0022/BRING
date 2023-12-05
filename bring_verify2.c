@@ -172,9 +172,11 @@ void mod_test() {
 
         bi_gen_rand(&num0, SRC1_SIGN, SRC1_WORD_SIZE);
         bi_gen_rand(&num1, SRC2_SIGN, SRC2_WORD_SIZE);
-
+        // printf("if (");
+        // bi_print_bigint_hex(num0);
         clock_t start = clock();
-        BI_Mod_zxy(&result, num0, num1);
+        //BI_Mod_zxy(&result, num0, num1);
+        BI_Mod_xy(&num0, num1);
         clock_t end = clock();
         bench += (double)(end - start) / CLOCKS_PER_SEC;
         
@@ -183,7 +185,7 @@ void mod_test() {
         printf(" %% ");
         bi_print_bigint_hex(num1);
         printf(" != ");
-        bi_print_bigint_hex(result);
+        bi_print_bigint_hex(num0);
         printf(") :  cnt -= 1 ");
         puts("");   
 

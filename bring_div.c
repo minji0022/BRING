@@ -66,6 +66,16 @@ int BI_Mod_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2){
     bi_delete(&tQ);
     return FUNC_SUCCESS;
 }
+
+int BI_Mod_xy(BIGINT** bi_src1, BIGINT* bi_src2){
+    BIGINT* tmp = NULL;
+    
+    BI_Mod_zxy(&tmp, *bi_src1, bi_src2);
+    bi_assign(bi_src1, tmp);
+
+    bi_delete(&tmp);
+    return FUNC_SUCCESS;
+}
 //===============================================================================================//
 
 //===============================================================================================//
