@@ -31,16 +31,19 @@ typedef unsigned char byte;
     #define MAX_OF_WORD 0xff
     #define WORD_SIZE_CHECK 0x80
     #define SHIFT_SIZE 3
+    #define KARA_FLAG 32
 #elif WORD == 1
     typedef unsigned int word;
     #define MAX_OF_WORD 0xffffffff
     #define WORD_SIZE_CHECK 0x80000000
     #define SHIFT_SIZE 5
+    #define KARA_FLAG 4
 #elif WORD == 2
     typedef unsigned long long word;
     #define MAX_OF_WORD 0xffffffffffffffff
     #define WORD_SIZE_CHECK 0x8000000000000000
     #define SHIFT_SIZE 6
+    #define KARA_FLAG 4
 #endif
 
 #define BINARY              2

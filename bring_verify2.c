@@ -107,6 +107,7 @@ void mul_test() {
     }
 
 #if BENCHMARK_FLAG == 1
+        //printf("print( Karatsuba flag : %d)\n", KARA_FLAG);
         printf("print(\" 소요 시간 : ");
         printf("%f", bench/REPEAT_COUNT);
         printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
@@ -309,6 +310,7 @@ void barr_test() {
     }
 
 #if BENCHMARK_FLAG == 1
+        //printf("print( Karatsuba flag : %d)\n", KARA_FLAG);
         printf("print(\" 소요 시간 : ");
         printf("%f", bench/REPEAT_COUNT);
         printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);

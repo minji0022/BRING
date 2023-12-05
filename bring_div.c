@@ -65,8 +65,6 @@ int BI_Mod_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2){
     BI_Div_zxy(&tQ, bi_dst, bi_src1, bi_src2);
 
     bi_delete(&tQ);
-
-    bi_refine(*bi_dst);
     return FUNC_SUCCESS;
 }
 //===============================================================================================//

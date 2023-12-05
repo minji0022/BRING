@@ -49,8 +49,8 @@ int BI_Mul_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
     bi_new(bi_dst, (bi_src1->wordlen + bi_src2->wordlen + 1));
 
     // 추후 카라추바 곱셈으로 변경 예정
-    bi_Mul_Schoolbook_zxy(bi_dst, bi_src1, bi_src2);
-    //bi_Mul_Karatsuba(bi_dst, bi_src1, bi_src2, 4);
+    //bi_Mul_Schoolbook_zxy(bi_dst, bi_src1, bi_src2);
+    bi_Mul_Karatsuba(bi_dst, bi_src1, bi_src2, KARA_FLAG);
     
     if((bi_src1->sign == NEGATIVE && bi_src2->sign == NON_NEGATIVE) || (bi_src1->sign == NON_NEGATIVE && bi_src2->sign == NEGATIVE)) {
         (*bi_dst)->sign = NEGATIVE;
