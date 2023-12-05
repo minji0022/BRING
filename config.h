@@ -8,7 +8,7 @@
  * Elif WORD == 1, then "typedef unsigned int word;"
  * Elif WORD == 2, then "typedef unsigned long long word;"
 */
-#define WORD 2
+#define WORD 1
 
 // ------------------------------------------------------------
 // 검증
@@ -24,7 +24,7 @@
  * @test ${6: Verify EXP_MOD Operation
  * @test ${7: Verify Fast REDUCTION Operation
  */
-#define VERIFY_MODE 2
+#define VERIFY_MODE 6
 
 /**
  * @brief 연산 구현 정확성 검증 / 성능 측정(속도 측정) 설정
@@ -43,7 +43,7 @@
  * @brief 검증시 입력 1(Src1)의 워드 길이
  * @note SRC1_WORD_SIZE < MAX_BINT_LEN(=64)
 */
-#define SRC1_WORD_SIZE 60
+#define SRC1_WORD_SIZE 64
 
 /**
  * @brief 검증시 입력 1(Src1)의 부호 정보 
@@ -55,7 +55,7 @@
  * @brief 검증시 입력 2(Src2)의 워드 길이
  * @note SRC2_WORD_SIZE < MAX_BINT_LEN(=64)
 */
-#define SRC2_WORD_SIZE 45
+#define SRC2_WORD_SIZE 32
 
 /**
  * @brief 검증시 입력 2(Src2)의 부호 정보 

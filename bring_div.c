@@ -41,7 +41,6 @@ int BI_Div_zxy(BIGINT** bi_quotient, BIGINT** bi_remainder, BIGINT* bi_src1, BIG
 
         bi_left_word_shift(*bi_remainder, 1); // line 6
         BI_Add_zxy(&tR, *bi_remainder, tAi); // line 6
-
         bi_Divc_zxy(&tQ, bi_remainder, tR, bi_src2); // line 7
         (*bi_quotient)->p[i] = tQ->p[0];
         
@@ -131,25 +130,19 @@ void bi_Divcc_zxy(BIGINT** bi_quotient, BIGINT** bi_remainder, BIGINT* bi_src1, 
 
     // 길이가 같은 경우, if n = m
     if (n == m) {
-        //printf("DIVCC n=m인 경우 계산\n");
         (*bi_quotient)->p[0] = bi_src1->p[m-1] / bi_src2->p[m-1];
     }
     
     // if n = m+1
     else if (n == m+1) {
-        //printf("DIVCC n=m+1인 경우 계산\n");
         if (bi_src1->p[m] == bi_src2->p[m-1]){
-            //printf("DIVCC case1 계산\n");
             (*bi_quotient)->p[0] = MAX_OF_WORD;
         }
         else { // longdiv 써야 함.
-            //bi_quotient->p[0] = ((bi_src1->p[m]<<32) + bi_src1->p[m-1]) / bi_src2->p[m-1];
-            //printf("DIVCC case2 계산\n");
             (*bi_quotient)->p[0] = bi_longdiv(bi_src1->p[m], bi_src1->p[m-1], bi_src2->p[m-1]);
         }
     }
     
-    //bi_Mul_PS(&BQ, bi_src2, bi_quotient); // BQ 구하기
     BI_Mul_zxy(&BQ, bi_src2, *bi_quotient); // BQ 구하기
     BI_Sub_zxy(bi_remainder, bi_src1, BQ); // R <- A - BQ
     

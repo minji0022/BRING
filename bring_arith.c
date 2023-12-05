@@ -25,8 +25,8 @@ int BI_ExpMod_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M
         bi_set_zero(bi_dst); /* 0 <- 0^n (n != 0) */
         return FUNC_SUCCESS;
     }
-    //bi_Exp_L2R_zx(bi_dst, bi_src1, bi_src2, bi_M); /* 이 외 나머지 */
-    bi_Exp_MnS_zx(bi_dst, bi_src1, bi_src2, bi_M); /* 이 외 나머지 */
+    bi_Exp_L2R_zx(bi_dst, bi_src1, bi_src2, bi_M); /* 이 외 나머지 */
+    //bi_Exp_MnS_zx(bi_dst, bi_src1, bi_src2, bi_M); /* 이 외 나머지 */
     // 부호 정보 할당
     if (bi_src1->sign == NEGATIVE && (bi_M->p[0] & 0x1)) { // 음수의 홀수 제곱인 경우만 결과가 음수.
         (*bi_dst)->sign = NEGATIVE;
@@ -212,7 +212,8 @@ void bi_Exp_L2R_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi
         bi_delete(&temp1); // temp1 이후에 다시 사용하기 위해 비워주기.
         //line 4
         if(((bi_src2->p[word_cnt] >> bit_cnt) & 0x1) == 1){ // n의 자릿수 비트가 1인 경우
-            bi_Mul_Schoolbook_zxy(&temp1, temp2, bi_src1); // temp1 <- t*x
+            //bi_Mul_Schoolbook_zxy(&temp1, temp2, bi_src1); // temp1 <- t*x
+            bi_Mul_Karatsuba(&temp1, temp2, bi_src1, KARA_FLAG);  // temp1 <- t*x
             BI_Mod_zxy(bi_dst, temp1, bi_M); // bi_dst <- t*x mod M
         }
         else {
@@ -237,22 +238,47 @@ void bi_Exp_MnS_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi
     (*bi_dst)->p[0] = 1; // bi_dst를 1로 초기화
     bi_assign(&tdst, bi_src1); // x^n mod M 에서 n 값을 t1에 복사
 
+    BIGINT* T = NULL;
+    bi_BR_pre_computed(&T, bi_M);
+
     while (word_cnt >= 0){ // 모든 워드에서 진행
         BIGINT *temp0 = NULL; // t0 값을 저장할 첫 번째 임시 변수   
         BIGINT *temp1 = NULL; // t1 값을 저장할 두 번째 임시 변수
         
         // line 3,4
         if(((bi_src2->p[word_cnt] >> bit_cnt) & 0x1) == 1){ // n의 자릿수 비트가 1인 경우
-            bi_Mul_Schoolbook_zxy(&temp0, *bi_dst, tdst); // temp0 <- t0*t1
-            BI_Mod_zxy(bi_dst, temp0, bi_M); // bi_dst <- t0*t1 mod M
+            bi_Mul_Karatsuba(&temp0, *bi_dst, tdst, KARA_FLAG); // temp0 <- t0*t1
+            if(temp0->wordlen <= (2 * bi_M->wordlen)) {
+                BI_Barret_Reduction(bi_dst, temp0, bi_M, T);
+            }
+            else {
+                BI_Mod_zxy(bi_dst, temp0, bi_M); // bi_dst <- t0*t1 mod M
+            }
             bi_Sqrc_zy(&temp1, tdst); // temp1 = t1^2
-            BI_Mod_zxy(&tdst, temp1, bi_M); // tdst = t1^2 mod M
+
+            if(temp1->wordlen <= (2 * bi_M->wordlen)) {
+                BI_Barret_Reduction(&tdst, temp1, bi_M, T);
+            }
+            else {
+                BI_Mod_zxy(&tdst, temp1, bi_M); // tdst = t1^2 mod M
+            }
         }
         else {
-            bi_Mul_Schoolbook_zxy(&temp1, *bi_dst, tdst); // temp1 <- t0*t1
-            BI_Mod_zxy(&tdst, temp1, bi_M); // tdst <- to*t1 mod M
+            bi_Mul_Karatsuba(&temp1, *bi_dst, tdst, KARA_FLAG); // temp1 <- t0*t1
+            if(temp1->wordlen <= (2 * bi_M->wordlen)) {
+                BI_Barret_Reduction(&tdst, temp1, bi_M, T);
+            }
+            else {
+                BI_Mod_zxy(&tdst, temp1, bi_M); // tdst = t1^2 mod M
+            }
+
             bi_Sqrc_zy(&temp0, *bi_dst); // temp0 = t0^2
-            BI_Mod_zxy(bi_dst, temp0, bi_M); // bi_dst = t0^2 mod M
+            if(temp0->wordlen <= (2 * bi_M->wordlen)) {
+                BI_Barret_Reduction(bi_dst, temp0, bi_M, T);
+            }
+            else {
+                BI_Mod_zxy(bi_dst, temp0, bi_M); // bi_dst <- t0*t1 mod M
+            }
         }
         bit_cnt--; // 하나의 워드 내에서 비트 시프트할 횟수 -1하는 작업.
         if(bit_cnt < 0) { // 하나의 워드 내에서 비트 시프트를 다 했으면 
@@ -262,6 +288,7 @@ void bi_Exp_MnS_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi
         bi_delete(&temp0);
         bi_delete(&temp1);
     }
+    bi_delete(&T);
     bi_delete(&tdst);
 }
 

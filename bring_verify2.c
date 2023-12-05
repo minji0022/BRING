@@ -241,8 +241,9 @@ void exp_mod_test() {
         BIGINT* M = NULL;
 
         bi_gen_rand(&num0, SRC1_SIGN, SRC1_WORD_SIZE);
-        bi_gen_rand(&num1, SRC2_SIGN, SRC2_WORD_SIZE);
-        bi_gen_rand(&M, NON_NEGATIVE, 7);
+        bi_set_by_string(&num1, NON_NEGATIVE, "10001", HEXDECIMAL);
+        //bi_gen_rand(&num1, SRC2_SIGN, SRC2_WORD_SIZE);
+        bi_gen_rand(&M, NON_NEGATIVE, 32);
 
         clock_t start = clock();
         BI_ExpMod_zx(&result, num0, num1, M);
