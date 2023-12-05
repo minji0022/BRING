@@ -205,17 +205,6 @@ void bi_print_bigint_hex(BIGINT* bi_src) {
 #else
 
 #endif
-    printf("\n");
-}
-
-void bi_print_bigint_hex_lb(BIGINT* bi_src) {
-    if(bi_src->sign == NEGATIVE) {
-        printf("-");
-    }
-    printf("0x");
-    for(int i = bi_src->wordlen - 1; i >= 0; i--) {
-             printf("%08x", bi_src->p[i]);
-    }
 }
 
 
