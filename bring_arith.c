@@ -54,11 +54,6 @@ int BI_ExpMod_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M
     // 4-2. Multiply-and-Squaring Exp Mod : 부채널 공격에 내성을 가지지만 속도가 4-1과 비교하여 느림
     //bi_Exp_MnS_zx(bi_dst, bi_src1, bi_src2, bi_M);
 
-    // sign info assign
-    // 음수의 홀수 제곱인 경우만 결과가 음수.
-    if (bi_src1->sign == NEGATIVE && (bi_M->p[0] & 0x1)) { 
-        (*bi_dst)->sign = NEGATIVE;
-    }  
     return FUNC_SUCCESS;
 }
 
