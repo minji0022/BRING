@@ -66,7 +66,7 @@ int is_valid_hex(char* str) {
 int bi_set_by_string(BIGINT** bi_dst, int sign, char* str, int base) {
     // calculate input str length and word length
     int str_len = strlen(str);
-    int char_per_word = 2 * WORD_BYTE_SIZE; // 한워드에 몇글자가 들어가냐 : 변수 이륾 변경
+    int char_per_word = 2 * WORD_BYTE_SIZE; // 한 워드에 몇글자가 들어가냐
     int wordlen = (str_len + char_per_word - 1) / char_per_word;
     
     // declare new big int and initialize sign
