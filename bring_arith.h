@@ -13,7 +13,7 @@
 * @param[in] bi_src2 입력 src2
 * @return Success or Error Code
 */
-int BI_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); // z <- x+y 덧셈 함수 
+int BI_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); 
 
 /**
 * @details 두 큰 정수(BIGINT)를 빼는 연산
@@ -22,7 +22,7 @@ int BI_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); // z <- x+y �
 * @param[in] bi_src2 입력 src2
 * @return Success or Error Code
 */
-int BI_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); // z <- x-y 뺄셈 함수
+int BI_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); 
 
 /**
 * @details [곱셈 함수] 두 큰 정수(BIGINT)를 곱하는 연산
@@ -31,7 +31,7 @@ int BI_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); // z <- x-y �
 * @param[in] bi_src2 입력 src2
 * @return Success or Error Code
 */
-int BI_Mul_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); // z <- x*y 곱셈 함수
+int BI_Mul_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); 
 
 /**
 * @details [제곱 함수] 큰 정수(BIGINT)를 제곱하는 연산
@@ -39,7 +39,7 @@ int BI_Mul_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); // z <- x*y �
 * @param[in] bi_src 입력 src
 * @return Success or Error Code
 */
-int BI_Sqr_zx(BIGINT** bi_dst, BIGINT* bi_src); // z <- x^2 제곱 함수
+int BI_Sqr_zx(BIGINT** bi_dst, BIGINT* bi_src);
 
 /** 
  * @brief BI_Div_zxy 함수는 두 큰 정수를 나누는 연산을 수행
@@ -60,7 +60,7 @@ int BI_Div_zxy(BIGINT** bi_quotient, BIGINT** bi_remainder, BIGINT* bi_src1, BIG
  * @param[in] bi_src2 - 나누는 큰 정수인 BIGINT 구조체
  * @return 성공 시 FUNC_SUCCESS를 반환하고, 오류가 발생한 경우 오류 코드를 반환
  */
-int BI_Mod_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); // z <- x % y 모듈러 함수
+int BI_Mod_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2);
 
 /**
 * @brief [모듈러 지수승 함수] src1 ^ src2 mod M
@@ -70,7 +70,7 @@ int BI_Mod_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); // z <- x % y
 * @param[in] bi_M 입력 M
 * @return Success or Error Code
 */
-int BI_ExpMod_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M);  // z = x^n 지수승 함수
+int BI_ExpMod_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M);
 
 /**
 * @brief [Fast reduction function] src mod N 모듈러 연산
@@ -84,9 +84,13 @@ int BI_ExpMod_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M
 * 2) BI_Barret_Reduction
 * @note bi_src->wordlen <= (bi_N->wordlen * 2)를 만족해야 사용 가능
 */
-int BI_Barret_Reduction(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_N, BIGINT* bi_T); // Barret Reduction
+int BI_Barret_Reduction(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_N, BIGINT* bi_T);
 
-
+/**
+ * @brief Precomputation Function for Barrett reduction
+ * bi_T = WORD^(2 * bi_N->wordlen) / bi_N
+*/
+void bi_BR_pre_computed(BIGINT** bi_T, BIGINT* bi_N);
 
 //################################################################################################# 
 //                            유형 2. 연산대상 빅인티저에 연산 결과를 갱신하는 연산 함수
@@ -97,7 +101,7 @@ int BI_Barret_Reduction(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_N, BIGINT* 
 * @param[in] bi_src2 입력 src2
 * @return Success or Error Code
 */
-int BI_Add_xy(BIGINT** bi_src1, BIGINT* bi_src2); // x<-x+y 
+int BI_Add_xy(BIGINT** bi_src1, BIGINT* bi_src2);
 
 /**
 * @details [갱신 함수] 두 큰 정수(BIGINT)를 빼는 연산
@@ -105,7 +109,7 @@ int BI_Add_xy(BIGINT** bi_src1, BIGINT* bi_src2); // x<-x+y
 * @param[in] bi_src2 입력 src2
 * @return Success or Error Code
 */
-int BI_Sub_xy(BIGINT** bi_src1, BIGINT* bi_src2); // x<-x-y 
+int BI_Sub_xy(BIGINT** bi_src1, BIGINT* bi_src2);
 
 /**
 * @details [곱셈 갱신 함수] 두 큰 정수(BIGINT)를 곱하는 연산
@@ -113,7 +117,7 @@ int BI_Sub_xy(BIGINT** bi_src1, BIGINT* bi_src2); // x<-x-y
 * @param[in] bi_src2 입력 src2
 * @return Success or Error Code
 */
-int BI_Mul_xy(BIGINT** bi_src1, BIGINT* bi_src2); //  x<-x*y 
+int BI_Mul_xy(BIGINT** bi_src1, BIGINT* bi_src2);
 
 /**
 * @details [제곱 갱신 함수] 큰 정수(BIGINT)를 제곱하는 연산 
@@ -129,7 +133,7 @@ int BI_Sqr_x(BIGINT** bi_src); // x <- x^2
  * @param[in] bi_src2 - 나누는 큰 정수인 BIGINT 구조체
  * @return 성공 시 FUNC_SUCCESS를 반환하고, 오류가 발생한 경우 오류 코드를 반환
  */
-int BI_Mod_xy(BIGINT** bi_src1, BIGINT* bi_src2); // x <- x % y
+int BI_Mod_xy(BIGINT** bi_src1, BIGINT* bi_src2);
 
 //===============================================================================================//
 //                                       개발자용 함수 구역(코어 함수)
@@ -147,7 +151,7 @@ int BI_Mod_xy(BIGINT** bi_src1, BIGINT* bi_src2); // x <- x % y
 * @return int carry_out
 * @note bi_Add_w의 리턴 : carry
 */
-int bi_Add_w(word* p_dst, word p_src1, word p_src2, int carry_in); /**** 단일 워드 덧셈 ****/ 
+int bi_Add_w(word* p_dst, word p_src1, word p_src2, int carry_in);
 
 /**
 * @details 다중 워드 덧셈 Multi Word Addition
@@ -157,7 +161,7 @@ int bi_Add_w(word* p_dst, word p_src1, word p_src2, int carry_in); /**** 단일 
 * @return 
 * @note src1, src2 모두 양수로 보고 계산, src1의 길이가 src2의 길이보다 크거나 같도록 함.
 */
-void bi_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); /**** 다중 워드 덧셈 ****/
+void bi_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2);
 
 
 //################################################################################################# 
@@ -172,7 +176,7 @@ void bi_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); /**** 다중
 * @return int borrow_out
 * @note bi_Sub_w 리턴 : borrow. src1의 길이가 src2의 길이보다 크거나 같도록 함.
 */
-int bi_Sub_w(word* p_dst, word p_src1, word p_src2, int borrow_in); /**** 단일 워드 뺄셈 ****/
+int bi_Sub_w(word* p_dst, word p_src1, word p_src2, int borrow_in);
 
 /**
 * @details 다중 워드 뺄셈 Multi Word Subtraction
@@ -182,7 +186,7 @@ int bi_Sub_w(word* p_dst, word p_src1, word p_src2, int borrow_in); /**** 단일
 * @return 
 * @note src1, src2 모두 양수로 보고 계산, src1의 길이가 src2의 길이보다 크거나 같도록 함.
 */
-void bi_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); /**** 다중 워드 뺄셈 ****/
+void bi_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2);
 
 
 //################################################################################################# 
@@ -194,7 +198,7 @@ void bi_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); /**** 다중
 * @param[in] p_src1 입력 src1
 * @param[in] p_src2 입력 src2
 */
-void bi_Mul_w(BIGINT** bi_dst, word p_src1, word p_src2); /**** 단일 워드 곱셈 ****/
+void bi_Mul_w(BIGINT** bi_dst, word p_src1, word p_src2);
 
 /**
 * @details schoolbook 곱셈
@@ -202,7 +206,7 @@ void bi_Mul_w(BIGINT** bi_dst, word p_src1, word p_src2); /**** 단일 워드 �
 * @param[in] bi_src1 입력 src1
 * @param[in] bi_src2 입력 src2
 */
-void bi_Mul_Schoolbook_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); /**** 스쿨북 곱셈 ****/
+void bi_Mul_Schoolbook_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2);
 
 /**
 * @details Karatsuba 곱셈
@@ -211,7 +215,7 @@ void bi_Mul_Schoolbook_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2); /
 * @param[in] bi_src2 입력 src2
 * @param[in] flag schoolbook 곱셈 워드 단위 지정 Flag
 */
-void bi_Mul_Karatsuba(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, int flag); /**** 카라츄바 곱셈 ****/
+void bi_Mul_Karatsuba(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, int flag);
 
 
 //################################################################################################# 
@@ -222,14 +226,14 @@ void bi_Mul_Karatsuba(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, int fla
 * @param[out] bi_dst 단일 워드 제곱 결과 (= src1 * src1)
 * @param[in] p_src1 입력 src1
 */
-void bi_Sqr_w(BIGINT** bi_dst, word p_src1); /**** 단일 워드 제곱 ****/
+void bi_Sqr_w(BIGINT** bi_dst, word p_src1);
 
 /**
 * @details 다중 워드 제곱
 * @param[out] bi_dst 다중 워드 제곱 결과 (= src1 * src1)
 * @param[in] bi_src1 입력 src1
 */
-void bi_Sqrc_zy(BIGINT** bi_dst, BIGINT* bi_src1); /**** 다중 워드 제곱 ****/
+void bi_Sqrc_zy(BIGINT** bi_dst, BIGINT* bi_src1);
 
 
 //################################################################################################# 
@@ -274,42 +278,42 @@ void bi_Divc_zxy(BIGINT** bi_quotient, BIGINT** bi_remainder, BIGINT* bi_src1, B
  *  src = src << (r * WORD_BIT_SIZE)
  * @note 왼쪽 비트 시프트 연산 따로 존재
 */
-void bi_left_word_shift(BIGINT* bi_src, int r); /**** A << r words ****/
+void bi_left_word_shift(BIGINT* bi_src, int r);
 
 /**
  * @brief [갱신 함수] 오른쪽 워드 시프트 연산
  *  src = src >> (r * WORD_BIT_SIZE)
  * @note 오른쪽 비트 시프트 연산 따로 존재
 */
-void bi_right_word_shift(BIGINT* bi_src, int r); /**** A >> r words ****/
+void bi_right_word_shift(BIGINT* bi_src, int r);
 
 /**
  * @brief 왼쪽 워드 시프트 연산
  *  dst = src << (r * WORD_BIT_SIZE)
  * @note 왼쪽 비트 시프트 연산 따로 존재
 */
-void bi_left_word_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r); /**** A << r words ****/
+void bi_left_word_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r);
 
 /**
  * @brief 오른쪽 워드 시프트 연산
  *  dst = src >> (r * WORD_BIT_SIZE)
  * @note 오른쪽 비트 시프트 연산 따로 존재
 */
-void bi_right_word_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r); /**** A >> r words ****/
+void bi_right_word_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r);
 
 /**
  * @brief 왼쪽 비트 시프트 연산
  *  dst = src << r
  * @note 왼쪽 워드 시프트 연산 따로 존재
 */
-void bi_left_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r); /**** A << r bits ****/
+void bi_left_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r);
 
 /**
  * @brief 오른쪽 비트 시프트 연산
  *  dst = src >> r
  * @note 오른쪽 워드 시프트 연산 따로 존재
 */
-void bi_right_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r); /**** A >> r bits ****/
+void bi_right_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r);
 
 
 //################################################################################################# 
@@ -320,21 +324,11 @@ void bi_right_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r); /**** A >> r
  * dst = src1 ^ src2 mod M
  * @note 부채널 공격에 취약 (실행 시간이 Constant가 아님)
 */
-void bi_Exp_L2R_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M); /**** Left-to-Right exponentiation ****/
+void bi_Exp_L2R_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M);
 
 /**
  * @brief [모듈러 지수승 함수] Muliply-and-Squaring Algorithm.
  * dst = src1 ^ src2 mod M
  * @note 부채널 공격에 취약하지 않지만, bi_Exp_L2R_zx과 비교하여 속도가 느림.
 */
-void bi_Exp_MnS_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M); /**** Multiply-and-Square exponetiation****/
-
-
-//################################################################################################# 
-//                                       Fast Reduction 관련 함수 
-//#################################################################################################
-/**
- * @brief Precomputation Function for Barrett reduction
- * bi_T = WORD^(2 * bi_N->wordlen) / bi_N
-*/
-void bi_BR_pre_computed(BIGINT** bi_T, BIGINT* bi_N);
+void bi_Exp_MnS_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M);

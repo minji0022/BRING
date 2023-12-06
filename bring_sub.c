@@ -21,18 +21,18 @@ int BI_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2){
     } 
 
     // case 1: bi_src1이 0인 경우
-    if(bi_is_zero(bi_src1)) { /* 부호 변경하여 복사 */ // 0 - bi_Src2
-        bi_assign_flip_sign(bi_dst, bi_src2); // 이 안에 bi_new 있음
+    if(bi_is_zero(bi_src1)) { 
+        bi_assign_flip_sign(bi_dst, bi_src2);
         return FUNC_SUCCESS;
     } 
     // case 2: bi_src2가 0인 경우
-    if(bi_is_zero(bi_src2)) { /* 부호 유지하며 복사 */ // bi_src1 - 0
-        bi_assign(bi_dst, bi_src1);  // 이 안에 bi_new 있음.
+    if(bi_is_zero(bi_src2)) {
+        bi_assign(bi_dst, bi_src1);
         return FUNC_SUCCESS;
     }
     // case 3: bi_src1, bi_src2가 같은 경우
     if(bi_compare_bigint(bi_src1, bi_src2) == 0) { 
-        bi_set_zero(bi_dst); // 이 안에 bi_new 있음.
+        bi_set_zero(bi_dst);
         return FUNC_SUCCESS;
     }
 
@@ -40,7 +40,7 @@ int BI_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2){
     bi_new(bi_dst, bi_src1->wordlen + bi_src2->wordlen);
 
     // case 4: 부호 다른 경우
-    if(bi_src1->sign == NON_NEGATIVE && bi_src2->sign == NEGATIVE) { /* case 4: 부호 다른 경우 : 양수 - 음수 */
+    if(bi_src1->sign == NON_NEGATIVE && bi_src2->sign == NEGATIVE) { 
         if(bi_src1->wordlen >= bi_src2->wordlen) {
             bi_Add_zxy(bi_dst, bi_src1, bi_src2);
             return FUNC_SUCCESS;
@@ -50,7 +50,7 @@ int BI_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2){
             return FUNC_SUCCESS;
         }
     }
-    if(bi_src1->sign == NEGATIVE && bi_src2->sign == NON_NEGATIVE) { /* case 4: 부호 다른 경우 : 음수 - 양수 */
+    if(bi_src1->sign == NEGATIVE && bi_src2->sign == NON_NEGATIVE) {
         (*bi_dst)->sign = NEGATIVE;
 
         if(bi_src1->wordlen >= bi_src2->wordlen) {
@@ -64,7 +64,8 @@ int BI_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2){
     }    
     // case 5: 부호 같은 경우 : 양수 - 양수
     if(bi_src1->sign == NON_NEGATIVE && bi_src2->sign == NON_NEGATIVE) { 
-        if(bi_compare_ABS(bi_src1, bi_src2) == -1){ // 뒤에가 절대값이 더 큰 값인 경우
+        // bi_src2의 절대값이 더 큰 값인 경우
+        if(bi_compare_ABS(bi_src1, bi_src2) == -1){ 
             (*bi_dst)->sign = NEGATIVE;
             bi_Sub_zxy(bi_dst, bi_src2, bi_src1);
             return FUNC_SUCCESS;
@@ -76,7 +77,8 @@ int BI_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2){
     } 
     // case 5: 부호 같은 경우 : 음수 - 음수
     if(bi_src1->sign == NEGATIVE && bi_src2->sign == NEGATIVE) { 
-        if(bi_compare_ABS(bi_src1, bi_src2) == 1) { // 앞에가 절대값이 더 큰 값인 경우
+        // bi_src1의 절대값이 더 큰 값인 경우
+        if(bi_compare_ABS(bi_src1, bi_src2) == 1) {
             (*bi_dst)->sign = NEGATIVE;
             bi_Sub_zxy(bi_dst, bi_src1, bi_src2);
             return FUNC_SUCCESS;     

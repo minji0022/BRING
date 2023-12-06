@@ -55,7 +55,6 @@ typedef unsigned char byte;
 #define DECIMAL             10
 #define HEXDECIMAL          16
 
-// 워드의 바이트/비트 사이즈 정의
 #define WORD_BYTE_SIZE  (sizeof(word)) // 워드의 바이트 사이즈 
 #define WORD_BIT_SIZE   (sizeof(word)*8) // 워드의 비트 사이즈 bit length of a word (w ∈ {8, 32, 64})
 

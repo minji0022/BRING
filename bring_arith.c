@@ -55,7 +55,8 @@ int BI_ExpMod_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M
     //bi_Exp_MnS_zx(bi_dst, bi_src1, bi_src2, bi_M);
 
     // sign info assign
-    if (bi_src1->sign == NEGATIVE && (bi_M->p[0] & 0x1)) { // 음수의 홀수 제곱인 경우만 결과가 음수.
+    // 음수의 홀수 제곱인 경우만 결과가 음수.
+    if (bi_src1->sign == NEGATIVE && (bi_M->p[0] & 0x1)) { 
         (*bi_dst)->sign = NEGATIVE;
     }  
     return FUNC_SUCCESS;
@@ -118,6 +119,26 @@ int BI_Barret_Reduction(BIGINT** bi_dst, BIGINT* bi_src, BIGINT* bi_N, BIGINT* b
     return FUNC_SUCCESS;
 }
 
+/**
+ * @brief Precomputation Function for Barrett reduction
+ * bi_T = WORD^(2 * bi_N->wordlen) / bi_N
+*/
+void bi_BR_pre_computed(BIGINT** bi_T, BIGINT* bi_N){
+    BIGINT* bi_W_2n = NULL;
+    BIGINT* temp = NULL;
+
+    bi_set_one(&bi_W_2n);
+    
+    bi_left_word_shift(bi_W_2n, 2*bi_N->wordlen);
+
+    BI_Div_zxy(bi_T, &temp, bi_W_2n, bi_N);
+    
+    // variable delete..
+    bi_delete(&bi_W_2n);
+    bi_delete(&temp);    
+}
+
+
 //===============================================================================================//
 
 //===============================================================================================//
@@ -164,7 +185,7 @@ void bi_left_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r) { /**** B = A 
  *  dst = src >> r
  * @note 오른쪽 워드 시프트 연산 따로 존재
 */
-void bi_right_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r){ /**** B = A >> r bits ****/
+void bi_right_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r){ 
     int SLen = bi_src->wordlen;
     int word_shift = r / WORD_BIT_SIZE; // r 비트를 word(32비트)로 나눈 횟수
     int bit_shift = r % WORD_BIT_SIZE; // 나머지 비트 이동
@@ -199,7 +220,7 @@ void bi_right_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r){ /**** B = A 
  *  src = src << (r * WORD_BIT_SIZE)
  * @note 왼쪽 비트 시프트 연산 따로 존재
 */
-void bi_left_word_shift(BIGINT* bi_src, int r){  /**** A << r words ****/
+void bi_left_word_shift(BIGINT* bi_src, int r){ 
     int last_wordlen = bi_src->wordlen;
     int i;
     bi_src->wordlen = bi_src->wordlen + r;
@@ -221,7 +242,7 @@ void bi_left_word_shift(BIGINT* bi_src, int r){  /**** A << r words ****/
  *  dst = src << (r * WORD_BIT_SIZE)
  * @note 왼쪽 비트 시프트 연산 따로 존재
 */
-void bi_left_word_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r){  /**** A << r words ****/
+void bi_left_word_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r){
     int s_wordlen = bi_src->wordlen;
     int i;
     int d_wordlen = bi_src->wordlen + r;
@@ -259,7 +280,7 @@ void bi_right_word_shift(BIGINT* bi_src, int r){
  *  dst = src >> (r * WORD_BIT_SIZE)
  * @note 오른쪽 비트 시프트 연산 따로 존재
 */
-void bi_right_word_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r){ /**** A >> r words ****/
+void bi_right_word_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r){
     int i = 0;
     bi_new(bi_dst, bi_src->wordlen - r);
 
@@ -418,28 +439,4 @@ void bi_Exp_MnS_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi
     // variable delete..
     bi_delete(&T);
     bi_delete(&tdst);
-}
-
-
-//################################################################################################# 
-//                                      Fast Reduction 관련 함수
-//#################################################################################################
-
-/**
- * @brief Precomputation Function for Barrett reduction
- * bi_T = WORD^(2 * bi_N->wordlen) / bi_N
-*/
-void bi_BR_pre_computed(BIGINT** bi_T, BIGINT* bi_N){
-    BIGINT* bi_W_2n = NULL;
-    BIGINT* temp = NULL;
-
-    bi_set_one(&bi_W_2n);
-    
-    bi_left_word_shift(bi_W_2n, 2*bi_N->wordlen);
-
-    BI_Div_zxy(bi_T, &temp, bi_W_2n, bi_N);
-    
-    // variable delete..
-    bi_delete(&bi_W_2n);
-    bi_delete(&temp);    
 }

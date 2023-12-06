@@ -159,7 +159,8 @@ void bi_refine(BIGINT* bi_src) {
         bi_src->p = (word*)realloc(bi_src->p, sizeof(word)*new_wordlen);
     }
 
-    if((bi_src->wordlen == 1) && (bi_src->p[0] == 0x0)) { // 0인 빅인티저가 된 경우
+    // 0인 빅인티저가 된 경우
+    if((bi_src->wordlen == 1) && (bi_src->p[0] == 0x0)) { 
         bi_src->sign = NON_NEGATIVE;
     }
 }
@@ -262,7 +263,7 @@ void bi_set_one(BIGINT** bi_src) {
  * @param[in] bi_src 입력
  * @return 0이라면 1을, 아니라면 0을 반환
 */
-int bi_is_zero(BIGINT* bi_src) { // TRUE 1, false 0 리턴
+int bi_is_zero(BIGINT* bi_src) {
     if(bi_src->sign == NEGATIVE || bi_src->p[0] != 0) {
         return 0;
     }
@@ -272,6 +273,7 @@ int bi_is_zero(BIGINT* bi_src) { // TRUE 1, false 0 리턴
             return 0;
         } 
     }
+    // TRUE 1, false 0 리턴
     return 1;
 }
 
@@ -280,7 +282,7 @@ int bi_is_zero(BIGINT* bi_src) { // TRUE 1, false 0 리턴
  * @param[in] bi_src 입력
  * @return 1이라면 1을, 아니라면 0을 반환
 */
-int bi_is_one(BIGINT* bi_src) { // TRUE 1, false 0 리턴
+int bi_is_one(BIGINT* bi_src) { 
     if(bi_src->sign == NEGATIVE || bi_src->p[0] != 1) {
         return 0;
     }
@@ -289,6 +291,7 @@ int bi_is_one(BIGINT* bi_src) { // TRUE 1, false 0 리턴
             return 0;
         }
     }
+    // TRUE 1, false 0 리턴
     return 1;
 }
 
@@ -298,7 +301,7 @@ int bi_is_one(BIGINT* bi_src) { // TRUE 1, false 0 리턴
  * @param[in] bi_src2 입력
  * @return |bi_src1| > |bi_src2|이라면 1을, |bi_src1| < |bi_src2|라면 -1을, |bi_src1| = |bi_src2|라면 0을 반환
 */
-int bi_compare_ABS(BIGINT* bi_src1, BIGINT* bi_src2){ // bi_src1가 크면 1, bi_src2가 크면 -1, 같으면 0
+int bi_compare_ABS(BIGINT* bi_src1, BIGINT* bi_src2){ 
     // x의 워드 길이가 더 큰 경우
     if(bi_src1->wordlen > bi_src2->wordlen) {
         return 1;
@@ -325,7 +328,7 @@ int bi_compare_ABS(BIGINT* bi_src1, BIGINT* bi_src2){ // bi_src1가 크면 1, bi
  * @param[in] bi_src2 입력
  * @return bi_src1 > bi_src2이라면 1을, bi_src1 < bi_src2라면 -1을, bi_src1 = bi_src2라면 0을 반환
 */
-int bi_compare_bigint(BIGINT* bi_src1, BIGINT* bi_src2){ // bi_src1가 크면 1, bi_src2가 크면 -1, 같으면 0
+int bi_compare_bigint(BIGINT* bi_src1, BIGINT* bi_src2){
     // sign : NON_NEGATIVE = 0, NEGATIVE = 1
     int x_sign = bi_src1->sign;
     int y_sign = bi_src2->sign;
@@ -338,7 +341,7 @@ int bi_compare_bigint(BIGINT* bi_src1, BIGINT* bi_src2){ // bi_src1가 크면 1,
         return -1;
     }
     // bi_src1 * bi_src2 >= 0 인 경우(부호 같은 경우)
-    int ret = bi_compare_ABS(bi_src1, bi_src2); // 절댓값 비교함수
+    int ret = bi_compare_ABS(bi_src1, bi_src2);
     // bi_src1, bi_src2가 NON_NEGATIVE인 경우, bi_compare_ABS 결과 그대로 출력하면 됨.
     if(x_sign == 0) {
         return ret;
@@ -355,8 +358,10 @@ int bi_compare_bigint(BIGINT* bi_src1, BIGINT* bi_src2){ // bi_src1가 크면 1,
  * @return 비트 길이
 */
 int bi_get_bit_length(BIGINT* bi_src) {
-    int BitLen = (bi_src->wordlen) * WORD_BIT_SIZE; // word가 unsigned int인 경우 : (bi_src->wordlen) * 32 
-    int i = WORD_BIT_SIZE - 1; // word가 unsigned int인 경우 : i = 31
+    // Ex. word가 unsigned int인 경우 : (bi_src->wordlen) * 32 
+    int BitLen = (bi_src->wordlen) * WORD_BIT_SIZE; 
+    // Ex. word가 unsigned int인 경우 : i = 31
+    int i = WORD_BIT_SIZE - 1; 
     while ((bi_src->p[bi_src->wordlen - 1] >> i & 0x1) == 0) {
         BitLen--;
         i--;
@@ -379,7 +384,7 @@ int bi_get_word_length(BIGINT* bi_src) {
  * @param[in] bi_src2 입력
  * @return bi_src1->wordlen > bi_src2->wordlen이라면 1을, bi_src1->wordlen < bi_src2->wordlen라면 -1을, bi_src1->wordlen = bi_src2->wordlen라면 0을 반환
 */
-int bi_compare_length(BIGINT* bi_src1, BIGINT* bi_src2){ // bi_src1가 크면 1, bi_src2가 크면 -1, 같으면 0
+int bi_compare_length(BIGINT* bi_src1, BIGINT* bi_src2){
     if(bi_get_word_length(bi_src1) > bi_get_word_length(bi_src2)) {
         return 1;
     }
