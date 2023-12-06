@@ -89,13 +89,24 @@ int BI_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2){
     return FUNC_ERROR;
 }
 
+/**
+* @details [갱신 함수] 두 큰 정수(BIGINT)를 빼는 연산
+* @param[in] bi_src1 입력 src1 (= src1 - src2)
+* @param[in] bi_src2 입력 src2
+* @return Success or Error Code
+*/
 int BI_Sub_xy(BIGINT** bi_src1, BIGINT* bi_src2) {
     BIGINT* tmp = NULL;
     
-    BI_Sub_zxy(&tmp, *bi_src1, bi_src2);
+    int zxy_flag = BI_Sub_zxy(&tmp, *bi_src1, bi_src2);
     bi_assign(bi_src1, tmp);
 
     bi_delete(&tmp);
+    
+    // return value check
+    if(zxy_flag != FUNC_SUCCESS) {
+        return zxy_flag;
+    }
     return FUNC_SUCCESS;
 }
 
@@ -141,15 +152,18 @@ void bi_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
     int borrow = 0;
     int flag = 0;
 
+    // 워드 길이가 다를 경우 길이 맞춰 0 채우기
     if(bi_src1->wordlen != bi_src2->wordlen) {
         bi_fill_zero(bi_src2, bi_src1->wordlen - bi_src2->wordlen);
         flag = 1;
     }
     
     for(int i = 0; i < bi_src1->wordlen; i++) {
+        // single word sub
         borrow = bi_Sub_w(&((*bi_dst)->p[i]), bi_src1->p[i], bi_src2->p[i], borrow);
     }
 
+    // 0을 채운 경우, refine
     if(flag) {
         bi_refine(bi_src2);
     }

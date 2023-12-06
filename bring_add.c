@@ -34,7 +34,7 @@ int BI_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
     //bi_dst 할당.
     bi_new(bi_dst, (bi_src1->wordlen + bi_src2->wordlen + 1));
 
-    // case 3: 부호 다른 경우
+    // case 3: 부호 다른 경우 : 양수 + 음수
     if(bi_src1->sign == NON_NEGATIVE && bi_src2->sign == NEGATIVE) {
         // 음수의 절댓값이 더 큰 경우
         if(bi_compare_ABS(bi_src1, bi_src2) == -1) { 
@@ -46,7 +46,8 @@ int BI_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
             bi_Sub_zxy(bi_dst, bi_src1, bi_src2);
             return FUNC_SUCCESS;
         }
-    }
+    } 
+    // case 3: 부호 다른 경우 : 음수 + 양수
     if(bi_src1->sign == NEGATIVE && bi_src2->sign == NON_NEGATIVE) {
         if (bi_compare_ABS(bi_src1, bi_src2) == 1) {
             // 음수의 절댓값이 더 큰 경우
@@ -60,7 +61,7 @@ int BI_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
         }
         
     }
-    else {// case 4: 부호 같은 경우
+    else {  // case 4: 부호 같은 경우
         (*bi_dst)->sign = bi_src1->sign;
         if(bi_src1->wordlen >= bi_src2->wordlen) {
             bi_Add_zxy(bi_dst, bi_src1, bi_src2);
@@ -82,10 +83,18 @@ int BI_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
 int BI_Add_xy(BIGINT** bi_src1, BIGINT* bi_src2) {
     BIGINT* tmp = NULL;
     
-    BI_Add_zxy(&tmp, *bi_src1, bi_src2);
+    // tmp = bi_src1  + bi_src2
+    int zxy_flag = BI_Add_zxy(&tmp, *bi_src1, bi_src2);
+    // bi_src1 = tmp
     bi_assign(bi_src1, tmp);
 
     bi_delete(&tmp);
+    
+    // BI_Add_zxy return value check
+    if(zxy_flag != FUNC_SUCCESS) {
+        return zxy_flag;
+    }
+
     return FUNC_SUCCESS;
 }
 
@@ -108,16 +117,19 @@ int bi_Add_w(word* p_dst, word p_src1, word p_src2, int carry_in) {
 
     *p_dst = (p_src1 + p_src2);
 
+    // Carry check
     if(*p_dst < p_src1) {
         carry_out = 1;
     }
 
     *p_dst += carry_in;
     
+    // Carry check
     if(*p_dst < carry_in) {
         carry_out += 1;
     }
 
+    // return Carry
     return carry_out;
 }; 
 
@@ -135,17 +147,21 @@ void bi_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
 
     // src1과 src2의 길이가 다름 = |src1| > |src2|
     if(bi_src1->wordlen != bi_src2->wordlen) {
+        // |src2|를 |src1|의 길이에 맞게 앞에 0을 추가
         bi_fill_zero(bi_src2, bi_src1->wordlen - bi_src2->wordlen);
+        // 0 추가했다는 플래그
         flag = 1;
     }
 
     for(int i = 0; i < bi_src2->wordlen; i++) {
+        // 단일 워드 덧셈
         carry = bi_Add_w(&((*bi_dst)->p[i]), bi_src1->p[i], bi_src2->p[i], carry);
     }
 
     // 마지막 워드 덧셈 연산 후 캐리 발생하는 경우를 위함
     ((*bi_dst)->p[bi_src1->wordlen]) = carry;
 
+    // flag check
     if(flag) {
         bi_refine(bi_src2);
     }

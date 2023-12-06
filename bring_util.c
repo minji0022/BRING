@@ -1,7 +1,14 @@
 #include "bring_util.h"
 //################################################################################################# 
-//                                  BIGINT 생성 및 소멸관련 함수
+//                                  BIGINT 생성 및 소멸 관련 함수
 //#################################################################################################
+
+/**
+ * @brief BIGINT 생성
+ * @param[out] bi_dst wordlen의 길이인 큰 정수 메모리 공간 생성
+ * @param[in] wordlen 워드 길이 설정
+ * @note 부호는 NON_NEGATIVE로 설정
+*/
 void bi_new(BIGINT** bi_dst, int wordlen) {
     if(*bi_dst != NULL) {
         bi_delete(bi_dst);
@@ -13,6 +20,10 @@ void bi_new(BIGINT** bi_dst, int wordlen) {
     (*bi_dst)->p = (word*)calloc(wordlen, sizeof(word));
 }
 
+/**
+ * @brief BIGINT 소멸
+ * @param[in] bi_src 입력 BIGINT 삭제
+*/
 void bi_delete(BIGINT** bi_src) {
     if(*bi_src == NULL) {
         return ;
@@ -22,7 +33,10 @@ void bi_delete(BIGINT** bi_src) {
     *bi_src = NULL;
 }
 
-
+/**
+ * @brief 유효한 16진수 값인지 확인
+ * @return TRUE or ERR_INVALID_INPUT
+*/
 int is_valid_hex(char* str) {
     // 입력 문자열이 NULL이면 유효하지 않음
     if (str == NULL) {
@@ -42,16 +56,19 @@ int is_valid_hex(char* str) {
     return TRUE;
 }
 
-// @2023.09.30. hex fix
+/**
+ * @brief 16진수 문자열을 입력 받아 BIGINT set
+ * @param[out] bi_dst 출력
+ * @param[in] sign 입력 부호
+ * @param[in] str 입력 문자열
+ * @param[in] base 입력 진수 - 16진수 HEX만 지원
+*/
 int bi_set_by_string(BIGINT** bi_dst, int sign, char* str, int base) {
     // calculate input str length and word length
     int str_len = strlen(str);
     int char_per_word = 2 * WORD_BYTE_SIZE; // 한워드에 몇글자가 들어가냐 : 변수 이륾 변경
     int wordlen = (str_len + char_per_word - 1) / char_per_word;
     
-    // ----------- check -----------
-    // printf("string length: %d, word length: %d\n", str_len, wordlen);
-
     // declare new big int and initialize sign
     bi_new(bi_dst, wordlen);
     (*bi_dst)->sign = sign;
@@ -74,15 +91,9 @@ int bi_set_by_string(BIGINT** bi_dst, int sign, char* str, int base) {
 
         strncpy(chunk, str + start_index, end_index - start_index);
         chunk[end_index - start_index] = '\0'; // Add NUL
-
-        // ----------- check -----------
-        // printf("%s\n", chunk);
         
         // convert string -> hex(word)
         word hex_tmp = (word)strtoul(chunk, NULL, 16);
-
-        // ————— check —————
-        // printf("hex: %08x\n", hex_tmp);  
 
         // copy hex_tmp to big int word*
         (*bi_dst)->p[i] = hex_tmp;
@@ -90,98 +101,13 @@ int bi_set_by_string(BIGINT** bi_dst, int sign, char* str, int base) {
     return TRUE;
 }
 
-/*
-int bi_set_by_string(BIGINT** bi_dst, int sign, char* str, int base) {
-    int str_len = strlen(str); // 입력된 문자열의 길이 계산
-    int char_per_word = 2 * WORD_BYTE_SIZE; // 한 워드에 입력받은 char의 몇글자가 들어가는지 계산.
-    int wordlen = (str_len + char_per_word - 1) / char_per_word; // 문자열 길이에 따라서 필요한 워드 개수 계산
-    // 현재 word(unsigned int)가 4바이트니 8자리씩 끊어서 워드 하나 할당으로 함. 
-    // 8 대신 word와 관련있는 표현으로 바꿔보기 ex) 2*sizeof(word)
-
-    // 빅인티저 생성
-    bi_new(bi_dst, wordlen);
-    (*bi_dst)->sign = sign;    // 빅인티저의 부호 설정
-
-    // 문자열을 16진수에서 정수로 변환하여 빅인티저 배열에 저장하는 단계
-    int index = str_len - 1; // index : 전체 문자열의 index. 끝부터 시작
-
-    // 문자열 길이 및 워드길이 확인용
-    printf("str_len : %d /// ", str_len);
-    printf("wordlen : %d\n", wordlen);
-
-    // 문자를 8개씩 처리하여 unsigned int 정수로 변환
-    // 가장 오른쪽 워드(낮은 값)부터 작업
-    // 즉, 받은 전체 문자열이 6606BC465BF5ABCD일 때 5BF5ABCD 먼저 처리, 이후 6606BC46 처리하는 방식.
-    for (int i = 0; i < wordlen - 1; i++) { 
-        word value = 0; // 현재 처리중인 16진수 숫자 누적할 변수. 
-        // ex) 5BF5ABCD에서 CD처리 중이면 CD값을 정수로 변환하여 value에 넣을 것임.
-        int digits_to_read = 8; // 16진수 문자를 8개(4바이트)씩 처리할 것임. 
-        // 즉, 받은 전체 문자열이 6606BC465BF5ABCD일 때 6606BC46 5BF5ABCD 단위로 처리.
-
-        for (int j = 0; j < digits_to_read; j++) {
-            char c = str[index];
-            int digit_value;
-            if (c >= '0' && c <= '9') {
-                digit_value = c - '0';
-            } else if (c >= 'A' && c <= 'F') {
-                digit_value = c - 'A' + 10;
-            } else if (c >= 'a' && c <= 'f') {
-                digit_value = c - 'a' + 10;
-            } else {
-                // 예외 처리: 유효하지 않은 문자
-                bi_delete(bi_dst);
-                return INVALID_CHAR_ERROR;
-            }
-            value |= (digit_value << (j * 4)); 
-            //!!!! 16진수 기준--> 4비트씩 왼쪽으로 쉬프트하면서 값 계산...
-            //!!!! 다른 진수 고려하려면 수정해야함.
-            index--;
-        }
-        (*bi_dst)->p[i] = value;
-        //데이터 잘 들어가는지 확인용 코드
-        //printf("p[%d] : %08X /// ", i, (*bi_dst)->p[i]);
-    }
-    // 마지막 워드 부분 처리.
-    word value = 0; 
-    int digits_to_read = 8; 
-
-    for (int j = 0; j < digits_to_read; j++) {
-
-        if (index < 0) { // index 0 보다 작은 경우 : 문자열 끝난 경우
-            value |= (0 << (j * 4));
-        }
-        else {
-            char c = str[index];
-            int digit_value;
-
-            if (c >= '0' && c <= '9') {
-                digit_value = c - '0';
-            } else if (c >= 'A' && c <= 'F') {
-                digit_value = c - 'A' + 10;
-            } else if (c >= 'a' && c <= 'f') {
-                digit_value = c - 'a' + 10;
-            } else {
-                // 예외 처리: 유효하지 않은 문자
-                bi_delete(bi_dst);
-                return INVALID_CHAR_ERROR;
-            }
-            value |= (digit_value << (j * 4)); // 4비트씩 왼쪽으로 쉬프트하면서 값 계산
-        }
-        index--;
-    }
-    (*bi_dst)->p[wordlen-1] = value;
-    //데이터 잘 들어가는지 확인용 코드
-    //printf("p[last] : %08X ", (*bi_dst)->p[wordlen-1]);
-    //printf("\n");
-    return FUNC_SUCCESS;
-}
-*/
-
-
 //################################################################################################# 
 //                                  BIGINT 구조체를 활용하는 유틸 함수
 //#################################################################################################
-/* ///// 크기 비교 함수의 경우 Src1이 크거나 길면 1, 같으면 0, 작으면 -1 리턴 ///// */
+/**
+ * @brief BIGINT를 16진수로 출력
+ * @param[in] bi_src 입력
+*/
 void bi_print_bigint_hex(BIGINT* bi_src) {
     int word_size = WORD_BYTE_SIZE;
 
@@ -190,14 +116,19 @@ void bi_print_bigint_hex(BIGINT* bi_src) {
     }
     printf("0x");
 
+// case 1: word -> unsigned char
 #if WORD == 0
     for(int i = bi_src->wordlen - 1; i >= 0; i--) {
             printf("%02x", bi_src->p[i]);
         }
+
+// case 2: word -> unsigned int
 #elif WORD == 1
     for(int i = bi_src->wordlen - 1; i >= 0; i--) {
         printf("%08x", bi_src->p[i]);
     }
+
+// case 3: word -> unsigned long long
 #elif WORD == 2
     for(int i = bi_src->wordlen - 1; i >= 0; i--) {
             printf("%016llx", bi_src->p[i]);
@@ -207,7 +138,10 @@ void bi_print_bigint_hex(BIGINT* bi_src) {
 #endif
 }
 
-
+/**
+ * @brief BIGINT 상위 워드에 0이 채워져 있는 경우, 이를 제거하는 함수
+ * @param[in] bi_src 입력
+*/
 void bi_refine(BIGINT* bi_src) {
     if(bi_src == NULL) {
         return ;
@@ -230,6 +164,11 @@ void bi_refine(BIGINT* bi_src) {
     }
 }
 
+/**
+ * @brief BIGINT 할당 함수 (bi_dst = bi_src)
+ * @param[out] bi_dst 출력
+ * @param[in] bi_src 입력
+*/
 void bi_assign(BIGINT** bi_dst, BIGINT* bi_src) {
     if(*bi_dst != NULL) {
         bi_delete(bi_dst);
@@ -240,12 +179,19 @@ void bi_assign(BIGINT** bi_dst, BIGINT* bi_src) {
     array_copy((*bi_dst)->p, bi_src->p, bi_src->wordlen);
 }
 
+/**
+ * @brief BIGINT 부호만 반대로 할당하는 함수 (bi_dst = -bi_src)
+ * @param[out] bi_dst 출력
+ * @param[in] bi_src 입력
+*/
 void bi_assign_flip_sign(BIGINT** bi_dst, BIGINT* bi_src) {
     if(*bi_dst != NULL) {
         bi_delete(bi_dst);
     }
 
     bi_new(bi_dst, bi_src->wordlen);
+
+    // flip sign
     if(bi_src->sign == NON_NEGATIVE) {
         (*bi_dst)->sign = NEGATIVE;    
     }
@@ -255,20 +201,32 @@ void bi_assign_flip_sign(BIGINT** bi_dst, BIGINT* bi_src) {
     array_copy((*bi_dst)->p, bi_src->p, bi_src->wordlen);
 }
 
+/**
+ * @brief 배열 복사 함수
+*/
 void array_copy(word* p_dst, word* Src_p, int wordlen) {
     for(int i = 0; i < wordlen; i++) {
         p_dst[i] = Src_p[i];
     }
 }
 
-void bi_gen_rand(BIGINT** bi_src, int sign, int wordlen) {
-    bi_new(bi_src, wordlen);
-    (*bi_src)->sign = sign;
-    array_rand((*bi_src)->p, wordlen);
+/**
+ * @brief 설정된 길이의 BIGINT를 랜덤하게 설정하는 함수
+ * @param[out] bi_dst 출력
+ * @param[in] sign 입력 부호
+ * @param[in] wordlen 입력 길이
+*/
+void bi_gen_rand(BIGINT** bi_dst, int sign, int wordlen) {
+    bi_new(bi_dst, wordlen);
+    (*bi_dst)->sign = sign;
+    array_rand((*bi_dst)->p, wordlen);
 
-    bi_refine(*bi_src);
+    bi_refine(*bi_dst);
 }
 
+/**
+ * @brief 배열에 랜덤한 값을 할당하는 함수
+*/
 void array_rand(word* Dst, int wordlen) {
     byte* ptr = (byte*)Dst;
     int cnt = wordlen * sizeof(word);
@@ -279,18 +237,31 @@ void array_rand(word* Dst, int wordlen) {
     }
 }
 
+/**
+ * @brief 0으로 초기화
+ * @param[in] bi_src 입력
+*/
 void bi_set_zero(BIGINT** bi_src) {
     bi_new(bi_src, 1);
     (*bi_src)->sign = NON_NEGATIVE;
     (*bi_src)->p[0] = 0x0;
 }
 
+/**
+ * @brief 1로 초기화
+ * @param[in] bi_src 입력
+*/
 void bi_set_one(BIGINT** bi_src) {
     bi_new(bi_src, 1);
     (*bi_src)->sign = NON_NEGATIVE;
     (*bi_src)->p[0] = 0x1;
 }
 
+/**
+ * @brief 0인지 확인 
+ * @param[in] bi_src 입력
+ * @return 0이라면 1을, 아니라면 0을 반환
+*/
 int bi_is_zero(BIGINT* bi_src) { // TRUE 1, false 0 리턴
     if(bi_src->sign == NEGATIVE || bi_src->p[0] != 0) {
         return 0;
@@ -304,6 +275,11 @@ int bi_is_zero(BIGINT* bi_src) { // TRUE 1, false 0 리턴
     return 1;
 }
 
+/**
+ * @brief 1인지 확인 
+ * @param[in] bi_src 입력
+ * @return 1이라면 1을, 아니라면 0을 반환
+*/
 int bi_is_one(BIGINT* bi_src) { // TRUE 1, false 0 리턴
     if(bi_src->sign == NEGATIVE || bi_src->p[0] != 1) {
         return 0;
@@ -316,6 +292,12 @@ int bi_is_one(BIGINT* bi_src) { // TRUE 1, false 0 리턴
     return 1;
 }
 
+/**
+ * @brief 절댓값 비교 함수
+ * @param[in] bi_src1 입력
+ * @param[in] bi_src2 입력
+ * @return |bi_src1| > |bi_src2|이라면 1을, |bi_src1| < |bi_src2|라면 -1을, |bi_src1| = |bi_src2|라면 0을 반환
+*/
 int bi_compare_ABS(BIGINT* bi_src1, BIGINT* bi_src2){ // bi_src1가 크면 1, bi_src2가 크면 -1, 같으면 0
     // x의 워드 길이가 더 큰 경우
     if(bi_src1->wordlen > bi_src2->wordlen) {
@@ -337,6 +319,12 @@ int bi_compare_ABS(BIGINT* bi_src1, BIGINT* bi_src2){ // bi_src1가 크면 1, bi
     return 0;
 } 
 
+/**
+ * @brief 크기 비교 함수
+ * @param[in] bi_src1 입력
+ * @param[in] bi_src2 입력
+ * @return bi_src1 > bi_src2이라면 1을, bi_src1 < bi_src2라면 -1을, bi_src1 = bi_src2라면 0을 반환
+*/
 int bi_compare_bigint(BIGINT* bi_src1, BIGINT* bi_src2){ // bi_src1가 크면 1, bi_src2가 크면 -1, 같으면 0
     // sign : NON_NEGATIVE = 0, NEGATIVE = 1
     int x_sign = bi_src1->sign;
@@ -358,10 +346,14 @@ int bi_compare_bigint(BIGINT* bi_src1, BIGINT* bi_src2){ // bi_src1가 크면 1,
     // bi_src1, bi_src2가 NEGATIVE인 경우, bi_compare_ABS 결과 반대로 출력하면 됨.
     else {
         return ret * (-1);
-    }
-        
+    }        
 }
 
+/**
+ * @brief 비트 길이를 반환하는 함수
+ * @param[in] bi_src 입력
+ * @return 비트 길이
+*/
 int bi_get_bit_length(BIGINT* bi_src) {
     int BitLen = (bi_src->wordlen) * WORD_BIT_SIZE; // word가 unsigned int인 경우 : (bi_src->wordlen) * 32 
     int i = WORD_BIT_SIZE - 1; // word가 unsigned int인 경우 : i = 31
@@ -372,10 +364,21 @@ int bi_get_bit_length(BIGINT* bi_src) {
     return BitLen;
 } 
 
+/**
+ * @brief 워드 길이를 반환하는 함수
+ * @param[in] bi_src 입력
+ * @return 워드 길이
+*/
 int bi_get_word_length(BIGINT* bi_src) {
     return bi_src->wordlen;
 }
 
+/**
+ * @brief 길이 비교 함수
+ * @param[in] bi_src1 입력
+ * @param[in] bi_src2 입력
+ * @return bi_src1->wordlen > bi_src2->wordlen이라면 1을, bi_src1->wordlen < bi_src2->wordlen라면 -1을, bi_src1->wordlen = bi_src2->wordlen라면 0을 반환
+*/
 int bi_compare_length(BIGINT* bi_src1, BIGINT* bi_src2){ // bi_src1가 크면 1, bi_src2가 크면 -1, 같으면 0
     if(bi_get_word_length(bi_src1) > bi_get_word_length(bi_src2)) {
         return 1;
@@ -388,6 +391,12 @@ int bi_compare_length(BIGINT* bi_src1, BIGINT* bi_src2){ // bi_src1가 크면 1,
     }
 }
 
+/**
+ * @brief 더 큰 BIGINT의 워드 길이를 반환하는 함수
+ * @param[in] bi_src1 입력
+ * @param[in] bi_src2 입력
+ * @return 워드 길이
+*/
 int bi_get_max_length(BIGINT* bi_src1, BIGINT* bi_src2){
     int result = bi_compare_length(bi_src1, bi_src2);
     if(result == 1) {
@@ -398,6 +407,12 @@ int bi_get_max_length(BIGINT* bi_src1, BIGINT* bi_src2){
     }
 }
 
+/**
+ * @brief 더 작은 BIGINT의 워드 길이를 반환하는 함수
+ * @param[in] bi_src1 입력
+ * @param[in] bi_src2 입력
+ * @return 워드 길이
+*/
 int bi_get_min_length(BIGINT* bi_src1, BIGINT* bi_src2){
     int result = bi_compare_length(bi_src1, bi_src2);
     if(result == 1) {
@@ -408,13 +423,23 @@ int bi_get_min_length(BIGINT* bi_src1, BIGINT* bi_src2){
     }
 }
 
-int bi_abs_is_one(BIGINT* bi_src){ // 절댓값이 1이면 1, 아니면 0 리턴
+/**
+ * @brief 절댓값이 1인지 확인하는 함수
+ * @param[in] bi_src 입력
+ * @return 절댓값이 1이면 1, 아니면 0 리턴
+*/
+int bi_abs_is_one(BIGINT* bi_src){ 
     if(bi_src->wordlen == 1 && bi_src->p[0] == 1) {
         return 1;
     }
     return 0;
 }
 
+/**
+ * @brief int 의 비트 길이를 반환하는 함수
+ * @param[in] n 입력
+ * @return n의 비트 길이
+*/
 int bi_length_of_n(int n) {
     int length = 0;
     while(n > 0) {
@@ -424,49 +449,43 @@ int bi_length_of_n(int n) {
     return length;
 }
 
+/**
+ * @brief 원하는 워드 길이가 될 때까지 상위 워드에 0을 채우는 함수
+ * @param[in] bi_src 입력
+ * @param[in] len 입력 워드 길이
+*/
 void bi_fill_zero(BIGINT* bi_src, int len) {
     if(bi_src == NULL) {
         return ;
     }
     bi_src->wordlen = bi_src->wordlen + len;
     bi_src->p = (word*)realloc(bi_src->p, sizeof(word)*bi_src->wordlen);
-    // 아래는 realloc시 메모리 할당 오류가 나는 경우를 처리하기 위한 부분임. 
-    // 실제로는 bi_src->p = (word*)realloc(bi_src->p, sizeof(word)*new_wordlen); 
-    // 대신 아래 부분이 있어야할 것 같음. bi_fill_zero의 리턴 값을 int로 하고, 메모리 할당 실패시 bi_Add랑 bi_Sub에서
-    // 이를 확인하고 연산을 종료하든지, 다른 방식으로 연산을 진행하든지 해야할 수도?
-    /*
-    word* backupBuffer = bi_src->p;
-    if(NULL == (bi_src->p = (word*)realloc(bi_src->p, sizeof(word)*new_wordlen)))
-    {
-        bi_src->p = backupBuffer;
-        printf("Memory allocation is failed in bi_fill_zero(%p)", bi_src->p);
-        return;
-    }
-    */
+    
     for(int i = bi_src->wordlen-1; i >= bi_src->wordlen - len; i--) {
         bi_src->p[i] = 0x0;
     }
 }
 
+/**
+ * @brief dst = src mod 2^r
+ * @param[out] bi_dst 출력
+ * @param[in] bi_src 입력
+ * @param[in] r 입력
+*/
 void reductionOf2(BIGINT** bi_dst, BIGINT* bi_src, int r){
-    
     int wk = bi_src->wordlen * WORD_BIT_SIZE;
-    //printf("k = %d >> %d = %d\n", r, SHIFT_SIZE, k);
 
     if (r >= WORD_BIT_SIZE * bi_src->wordlen) {
         bi_assign(bi_dst, bi_src);
         return ;
     }
-
     else if (r % WORD_BIT_SIZE == 0 && ( r/WORD_BIT_SIZE < bi_src->wordlen)) {
         int k = r >> SHIFT_SIZE;
         bi_new(bi_dst, k);
         array_copy((*bi_dst)->p, bi_src->p, k);
         return ;
     }
-
     else {
-        //bi_new(bi_dst, )
         printf("bi_dst is not allocated \n");
         return ; // 나머지는 사용 안함. 필요시 구현
     }
