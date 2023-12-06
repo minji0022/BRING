@@ -1,5 +1,10 @@
 #include "bring_def.h"
 
+//===============================================================================================//
+//                                       사용자용 함수 구역
+//                                     사용자가 직접 사용할 함수
+//===============================================================================================//
+
 //################################################################################################# 
 //                                  BIGINT 생성 및 소멸관련 함수
 //#################################################################################################
@@ -58,33 +63,12 @@ void bi_assign(BIGINT** bi_dst, BIGINT* bi_src);
 void bi_assign_flip_sign(BIGINT** bi_dst, BIGINT* bi_src);
 
 /**
- * @brief 유효한 16진수 값인지 확인
- * @return TRUE or ERR_INVALID_INPUT
-*/
-int is_valid_hex(char* str);
-
-/**
- * @brief 배열 복사 함수
- * @param[out] p_dst 출력 워드 포인터
- * @param[in] Src_p 입력 워드 포인터
- * @param[in] wordlen 입력 워드 길이
-*/
-void array_copy(word* p_dst, word* p_src, int wordlen);
-
-/**
  * @brief 설정된 길이의 BIGINT를 랜덤하게 설정하는 함수
  * @param[out] bi_dst BIGINT 구조체 더블 포인터 출력
  * @param[in] sign 입력 부호
  * @param[in] wordlen 입력 길이
 */
 void bi_gen_rand(BIGINT** bi_src, int sign, int wordlen);
-
-/**
- * @brief 배열에 랜덤한 값을 할당하는 함수
- * @param[out] p_dst 출력 워드 포인터
- * @param[in] wordlen 입력 워드 길이
-*/
-void array_rand(word* p_dst, int wordlen);
 
 /**
  * @brief 0으로 초기화
@@ -178,7 +162,7 @@ int bi_abs_is_one(BIGINT* bi_src);
  * @param[in] n 입력
  * @return n의 비트 길이
 */
-int bi_length_of_n(int n); /**** 정수 n의 비트 길이 리턴하는 함수 ****/
+int bi_length_of_n(int n); 
 
 /**
  * @brief 원하는 워드 길이가 될 때까지 상위 워드에 0을 채우는 함수
@@ -194,3 +178,30 @@ void bi_fill_zero(BIGINT* bi_src, int len);
  * @param[in] r 입력 - 모듈러 값
 */
 void reductionOf2(BIGINT** bi_dst, BIGINT* bi_src, int r);
+
+//===============================================================================================//
+//                                       개발자용 함수 구역
+//                                  사용자는 직접 사용하지 않는 함수
+//===============================================================================================//
+
+/**
+ * @brief 유효한 16진수 값인지 확인
+ * @return TRUE or ERR_INVALID_INPUT
+*/
+int is_valid_hex(char* str);
+
+/**
+ * @brief 배열 복사 함수
+ * @param[out] p_dst 출력 워드 포인터
+ * @param[in] Src_p 입력 워드 포인터
+ * @param[in] wordlen 입력 워드 길이
+*/
+void array_copy(word* p_dst, word* p_src, int wordlen);
+
+/**
+ * @brief 배열에 랜덤한 값을 할당하는 함수
+ * @param[out] p_dst 출력 워드 포인터
+ * @param[in] wordlen 입력 워드 길이
+*/
+void array_rand(word* p_dst, int wordlen);
+
