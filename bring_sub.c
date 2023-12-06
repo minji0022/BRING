@@ -7,9 +7,9 @@
 
 /**
 * @details 두 큰 정수(BIGINT)를 빼는 연산
-* @param[out] bi_dst 뺄셈 결과 (= src1 - src2)
-* @param[in] bi_src1 입력 src1
-* @param[in] bi_src2 입력 src2
+* @param[out] bi_dst BIGINT 구조체 더블 포인터 뺄셈 결과 (= src1 - src2)
+* @param[in] bi_src1 BIGINT 구조체 포인터 입력 src1
+* @param[in] bi_src2 BIGINT 구조체 포인터 입력 src2
 * @return Success or Error Code
 */
 int BI_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2){
@@ -93,8 +93,8 @@ int BI_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2){
 
 /**
 * @details [갱신 함수] 두 큰 정수(BIGINT)를 빼는 연산
-* @param[in] bi_src1 입력 src1 (= src1 - src2)
-* @param[in] bi_src2 입력 src2
+* @param[in, out] bi_src1 BIGINT 구조체 더블 포인터 입력, 출력 src1 (= src1 - src2)
+* @param[in] bi_src2 BIGINT 구조체 포인터 입력 src2
 * @return Success or Error Code
 */
 int BI_Sub_xy(BIGINT** bi_src1, BIGINT* bi_src2) {
@@ -144,10 +144,9 @@ int bi_Sub_w(word* p_dst, word p_src1, word p_src2, int borrow_in) {
 
 /**
 * @details 다중 워드 뺄셈 Multi Word Subtraction
-* @param[out] bi_dst 다중 워드 뺄셈 결과 (= src1 - src2)
-* @param[in] bi_src1 입력 src1
-* @param[in] bi_src2 입력 src2
-* @return 
+* @param[out] bi_dst BIGINT 구조체 더블 포인터 다중 워드 뺄셈 결과 (= src1 - src2)
+* @param[in] bi_src1 BIGINT 구조체 포인터 입력 src1
+* @param[in] bi_src2 BIGINT 구조체 포인터 입력 src2
 * @note src1, src2 모두 양수로 보고 계산, src1의 길이가 src2의 길이보다 크거나 같도록 함.
 */
 void bi_Sub_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {

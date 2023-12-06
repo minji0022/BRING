@@ -7,9 +7,9 @@
 
 /**
 * @details [곱셈 함수] 두 큰 정수(BIGINT)를 곱하는 연산
-* @param[out] bi_dst 곱셈 결과 (= src1 * src2)
-* @param[in] bi_src1 입력 src1
-* @param[in] bi_src2 입력 src2
+* @param[out] bi_dst BIGINT 구조체 더블 포인터 곱셈 결과 (= src1 * src2)
+* @param[in] bi_src1 BIGINT 구조체 포인터 입력 src1
+* @param[in] bi_src2 BIGINT 구조체 포인터 입력 src2
 * @return Success or Error Code
 */
 int BI_Mul_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
@@ -58,8 +58,8 @@ int BI_Mul_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
 
 /**
 * @details [곱셈 갱신 함수] 두 큰 정수(BIGINT)를 곱하는 연산
-* @param[in] bi_src1 입력 src1 (= src1 * src2)
-* @param[in] bi_src2 입력 src2
+* @param[in, out] bi_src1 BIGINT 구조체 더블 포인터 입력, 출력 src1 (= src1 * src2)
+* @param[in] bi_src2 BIGINT 구조체 포인터 입력 src2
 * @return Success or Error Code
 */
 int BI_Mul_xy(BIGINT** bi_src1, BIGINT* bi_src2) {
@@ -79,8 +79,8 @@ int BI_Mul_xy(BIGINT** bi_src1, BIGINT* bi_src2) {
 
 /**
 * @details [제곱 함수] 큰 정수(BIGINT)를 제곱하는 연산
-* @param[out] bi_dst 제곱 결과 (= src * src)
-* @param[in] bi_src 입력 src
+* @param[out] bi_dst BIGINT 구조체 더블 포인터 제곱 결과 (= src * src)
+* @param[in] bi_src BIGINT 구조체 포인터 입력 src
 * @return Success or Error Code
 */
 int BI_Sqr_zx(BIGINT** bi_dst, BIGINT* bi_src) {
@@ -110,7 +110,7 @@ int BI_Sqr_zx(BIGINT** bi_dst, BIGINT* bi_src) {
 
 /**
 * @details [제곱 갱신 함수] 큰 정수(BIGINT)를 제곱하는 연산 
-* @param[in] bi_src 입력 src (= src * src)
+* @param[in, out] bi_src BIGINT 구조체 더블 포인터 입력, 출력 src (= src * src)
 * @return Success or Error Code
 */
 int BI_Sqr_x(BIGINT** bi_src) {
@@ -136,7 +136,7 @@ int BI_Sqr_x(BIGINT** bi_src) {
 
 /**
 * @details 단일 워드 곱셈
-* @param[out] bi_dst 단일 워드 곱셈 결과
+* @param[out] bi_dst BIGINT 구조체 더블 포인터 단일 워드 곱셈 결과
 * @param[in] p_src1 입력 src1
 * @param[in] p_src2 입력 src2
 */
@@ -173,9 +173,9 @@ void bi_Mul_w(BIGINT** bi_dst, word p_src1, word p_src2){
 
 /**
 * @details schoolbook 곱셈
-* @param[out] bi_dst 다중 워드 곱셈 결과 (= src1 * src2)
-* @param[in] bi_src1 입력 src1
-* @param[in] bi_src2 입력 src2
+* @param[out] bi_dst BIGINT 구조체 더블 포인터 다중 워드 곱셈 결과 (= src1 * src2)
+* @param[in] bi_src1 BIGINT 구조체 포인터 입력 src1
+* @param[in] bi_src2 BIGINT 구조체 포인터 입력 src2
 */
 void bi_Mul_Schoolbook_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
     BIGINT* tmp = NULL;
@@ -204,8 +204,8 @@ void bi_Mul_Schoolbook_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
 
 /**
 * @details 단일 워드 제곱
-* @param[out] bi_dst 단일 워드 제곱 결과 (= src1 * src1)
-* @param[in] p_src1 입력 src1
+* @param[out] bi_dst BIGINT 구조체 더블 포인터 단일 워드 제곱 결과 (= src1 * src1)
+* @param[in] p_src1 워드 입력 src1
 */
 void bi_Sqr_w(BIGINT** bi_dst, word p_src1) {
     word A0, A1, C1, C0 = 0;
@@ -246,8 +246,8 @@ void bi_Sqr_w(BIGINT** bi_dst, word p_src1) {
 
 /**
 * @details 다중 워드 제곱
-* @param[out] bi_dst 다중 워드 제곱 결과 (= src1 * src1)
-* @param[in] bi_src1 입력 src1
+* @param[out] bi_dst BIGINT 구조체 더블 포인터 다중 워드 제곱 결과 (= src1 * src1)
+* @param[in] bi_src1 BIGINT 구조체 포인터 입력 src1
 */
 void bi_Sqrc_zy(BIGINT** bi_dst, BIGINT* bi_src1) {
     BIGINT* C1 = NULL;
@@ -297,9 +297,9 @@ void bi_Sqrc_zy(BIGINT** bi_dst, BIGINT* bi_src1) {
 
 /**
 * @details Karatsuba 곱셈
-* @param[out] bi_dst 다중 워드 곱셈 결과 (= src1 * src2)
-* @param[in] bi_src1 입력 src1
-* @param[in] bi_src2 입력 src2
+* @param[out] bi_dst BIGINT 구조체 더블 포인터 다중 워드 곱셈 결과 (= src1 * src2)
+* @param[in] bi_src1 BIGINT 구조체 포인터 입력 src1
+* @param[in] bi_src2 BIGINT 구조체 포인터 입력 src2
 * @param[in] flag schoolbook 곱셈 워드 단위 지정 Flag
 */
 void bi_Mul_Karatsuba(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, int flag){

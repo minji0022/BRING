@@ -7,10 +7,10 @@
 
 /**
 * @brief [모듈러 지수승 함수] src1 ^ src2 mod M
-* @param[out] bi_dst 모듈러 지수승 결과 (= src1 ^ src2 mod M)
-* @param[in] bi_src1 입력 src1
-* @param[in] bi_src2 입력 src2
-* @param[in] bi_M 입력 M
+* @param[out] bi_dst BIGINT 구조체 더블 포인터 모듈러 지수승 결과 (= src1 ^ src2 mod M)
+* @param[in] bi_src1 BIGINT 구조체 포인터 입력 src1
+* @param[in] bi_src2 BIGINT 구조체 포인터 입력 src2
+* @param[in] bi_M BIGINT 구조체 포인터 입력 M
 * @return Success or Error Code
 */
 int BI_ExpMod_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M){
@@ -59,10 +59,10 @@ int BI_ExpMod_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi_M
 
 /**
 * @brief [Fast reduction function] src mod N 모듈러 연산
-* @param[out] bi_dst 모듈러 결과 (= src mod N)
-* @param[in] bi_src 입력 src
-* @param[in] bi_N 입력 N 
-* @param[in] bi_T 입력 사전 계산 값 T
+* @param[out] bi_dst BIGINT 구조체 더블 포인터 모듈러 결과 (= src mod N)
+* @param[in] bi_src BIGINT 구조체 포인터 입력 src
+* @param[in] bi_N BIGINT 구조체 포인터 입력 N 
+* @param[in] bi_T BIGINT 구조체 포인터 입력 사전 계산 값 T
 * @return Success or Error Code
 * @note 함수 사용 전 사전 계산 값 bi_T를 계산하는 함수 bi_BR_pre_computed를 실행해야 함.
 * 1) bi_BR_pre_computed
@@ -116,7 +116,9 @@ int BI_Barret_Reduction(BIGINT** bi_dst, BIGINT* bi_src, BIGINT* bi_N, BIGINT* b
 
 /**
  * @brief Precomputation Function for Barrett reduction
- * bi_T = WORD^(2 * bi_N->wordlen) / bi_N
+ * @param[out] bi_T BIGINT 구조체 더블 포인터 출력 T 
+ * @param[in] bi_N BIGINT 구조체 포인터 입력 N 
+ * @details bi_T = WORD^(2 * bi_N->wordlen) / bi_N
 */
 void bi_BR_pre_computed(BIGINT** bi_T, BIGINT* bi_N){
     BIGINT* bi_W_2n = NULL;
@@ -143,10 +145,13 @@ void bi_BR_pre_computed(BIGINT** bi_T, BIGINT* bi_N){
 
 /**
  * @brief 왼쪽 비트 시프트 연산
+ * @param[out] bi_dst BIGINT 구조체 더블 포인터 출력 bi_dst
+ * @param[in] bi_src BIGINT 구조체 포인터 입력 bi_src
+ * @param[in] r 이동할 비트 수(정수) 입력
  *  dst = src << r
  * @note 왼쪽 워드 시프트 연산 따로 존재
 */
-void bi_left_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r) { /**** B = A << r bits ****/
+void bi_left_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r) {
     int n = bi_src->wordlen;
     int word_shift = r / WORD_BIT_SIZE; // word_shift == k
 
@@ -177,6 +182,9 @@ void bi_left_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r) { /**** B = A 
 
 /**
  * @brief 오른쪽 비트 시프트 연산
+ * @param[out] bi_dst BIGINT 구조체 더블 포인터 출력 bi_dst
+ * @param[in] bi_src BIGINT 구조체 포인터 입력 bi_src
+ * @param[in] r 이동할 비트 수(정수) 입력
  *  dst = src >> r
  * @note 오른쪽 워드 시프트 연산 따로 존재
 */
@@ -212,6 +220,8 @@ void bi_right_bit_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r){
 
 /**
  * @brief [갱신 함수] 왼쪽 워드 시프트 연산
+ * @param[in, out] bi_src BIGINT 구조체 포인터 입력, 출력 bi_src
+ * @param[in] r 이동할 워드 수(정수) 입력
  *  src = src << (r * WORD_BIT_SIZE)
  * @note 왼쪽 비트 시프트 연산 따로 존재
 */
@@ -234,6 +244,9 @@ void bi_left_word_shift(BIGINT* bi_src, int r){
 
 /**
  * @brief 왼쪽 워드 시프트 연산
+ * @param[out] bi_dst BIGINT 구조체 더블 포인터 출력 bi_dst
+ * @param[in] bi_src BIGINT 구조체 포인터 입력 bi_src
+ * @param[in] r 이동할 워드 수(정수) 입력
  *  dst = src << (r * WORD_BIT_SIZE)
  * @note 왼쪽 비트 시프트 연산 따로 존재
 */
@@ -257,6 +270,8 @@ void bi_left_word_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r){
 
 /**
  * @brief [갱신 함수] 오른쪽 워드 시프트 연산
+ * @param[in,out] bi_src BIGINT 구조체 포인터 입력, 출력 bi_src
+ * @param[in] r 이동할 워드 수(정수) 입력
  *  src = src >> (r * WORD_BIT_SIZE)
  * @note 오른쪽 비트 시프트 연산 따로 존재
 */
@@ -272,6 +287,9 @@ void bi_right_word_shift(BIGINT* bi_src, int r){
 
 /**
  * @brief 오른쪽 워드 시프트 연산
+ * @param[out] bi_dst BIGINT 구조체 더블 포인터 출력 bi_dst
+ * @param[in] bi_src BIGINT 구조체 포인터 입력 bi_src
+ * @param[in] r 이동할 워드 수(정수) 입력
  *  dst = src >> (r * WORD_BIT_SIZE)
  * @note 오른쪽 비트 시프트 연산 따로 존재
 */
@@ -291,6 +309,10 @@ void bi_right_word_shift_zx(BIGINT** bi_dst, BIGINT* bi_src, int r){
 
 /**
  * @brief [모듈러 지수승 함수] Left-to-Right Algorithm.
+ * @param[out] bi_dst BIGINT 구조체 더블 포인터 출력 bi_dst
+ * @param[in] bi_src1 BIGINT 구조체 포인터 입력 bi_src1 - 밑
+ * @param[in] bi_src2 BIGINT 구조체 포인터 입력 bi_src2 - 지수
+ * @param[in] bi_M BIGINT 구조체 포인터 입력 bi_M - 모듈러 값
  * dst = src1 ^ src2 mod M
  * @note 부채널 공격에 취약 (실행 시간이 Constant가 아님)
 */
@@ -343,6 +365,10 @@ void bi_Exp_L2R_zx(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, BIGINT* bi
 
 /**
  * @brief [모듈러 지수승 함수] Muliply-and-Squaring Algorithm.
+ * @param[out] bi_dst BIGINT 구조체 더블 포인터 출력 bi_dst
+ * @param[in] bi_src1 BIGINT 구조체 포인터 입력 bi_src1 - 밑
+ * @param[in] bi_src2 BIGINT 구조체 포인터 입력 bi_src2 - 지수
+ * @param[in] bi_M BIGINT 구조체 포인터 입력 bi_M - 모듈러 값
  * dst = src1 ^ src2 mod M
  * @note 부채널 공격에 취약하지 않지만, bi_Exp_L2R_zx과 비교하여 속도가 느림.
 */
