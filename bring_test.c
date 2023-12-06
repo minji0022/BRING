@@ -29,26 +29,28 @@ int main(){
     }
 
     bi_print_bigint_hex(num0);
+    puts("");
     bi_print_bigint_hex(num1);
-
-    // printf("=============  덧셈 검증 예시  ============== \n");
+    puts("");
+    
+    // printf("\n=============  덧셈 검증 예시  ============== \n");
     // BI_Add_zxy(&result_add, num0, num1);
     // bi_print_bigint_hex(result_add);
 
-    // printf("=============  뺄셈 검증 예시  ============== \n");
+    // printf("\n=============  뺄셈 검증 예시  ============== \n");
     // BI_Sub_zxy(&result_sub, num0, num1);
     // bi_print_bigint_hex(result_sub);
 
-    // printf("=============  곱셈 검증 예시  ============== \n");
+    // printf("\n=============  곱셈 검증 예시  ============== \n");
     // BI_Mul_zxy(&result_mul, num0, num1);
     // bi_print_bigint_hex(result_mul);
 
-    // printf("=============  제곱 검증 예시  ============== \n");
+    // printf("\n=============  제곱 검증 예시  ============== \n");
     // BI_Sqr_zx(&result_sqr, num1);
     // bi_print_bigint_hex(result_sqr);
 
-    printf("=============  바렛 검증 예시  ============== \n");
-    //bi_Barret_Reduction(result_bar, num0, num1, numT);
+    printf("\n=============  바렛 검증 예시  ============== \n");
+    // bi_Barret_Reduction(result_bar, num0, num1, numT);
     // bi_print_bigint_hex(result_bar);
 
     bi_delete(&num0);
