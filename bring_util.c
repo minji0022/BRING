@@ -487,12 +487,14 @@ void reductionOf2(BIGINT** bi_dst, BIGINT* bi_src, int r){
 
     if (r >= WORD_BIT_SIZE * bi_src->wordlen) {
         bi_assign(bi_dst, bi_src);
+        bi_refine(*bi_dst);
         return ;
     }
     else if (r % WORD_BIT_SIZE == 0 && ( r/WORD_BIT_SIZE < bi_src->wordlen)) {
         int k = r >> SHIFT_SIZE;
         bi_new(bi_dst, k);
         array_copy((*bi_dst)->p, bi_src->p, k);
+        bi_refine(*bi_dst);
         return ;
     }
     else {
@@ -501,7 +503,7 @@ void reductionOf2(BIGINT** bi_dst, BIGINT* bi_src, int r){
         bi_new(bi_dst, k + 1);
         (*bi_dst)->p[k] = (word)((bi_src->p[k]) % ((word)1 << r_prime));
         array_copy((*bi_dst)->p, bi_src->p, k);
-        bi_print_bigint_hex(*bi_dst);
+        bi_refine(*bi_dst);
         return ; // 나머지는 사용 안함.
     }
 }
