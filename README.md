@@ -14,7 +14,5 @@ Team **PINOKIO's** with Kookmin Univ. in Korea.
 ## Building
 ```
 make
-./bring_test
-
 make clean
 ```
