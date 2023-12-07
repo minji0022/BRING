@@ -3,13 +3,13 @@
   "configurations": [
     {
       "name": "C/C++ Runner: Debug Session",
-      "type": "gcc",
+      "type": "cppdbg",
       "request": "launch",
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/Users/minji0022/Desktop/2023/2023-02/air/week9/BRING",
-      "program": "/Users/minji0022/Desktop/2023/2023-02/air/week9/BRING/build/Debug/outDebug",
+      "cwd": "/Users/minji0022/Desktop/2023/2023-02/air/week14/BRING-1",
+      "program": "/Users/minji0022/Desktop/2023/2023-02/air/week14/BRING-1/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
