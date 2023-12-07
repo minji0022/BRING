@@ -24,20 +24,13 @@
  * @test ${6: Verify EXP_MOD Operation
  * @test ${7: Verify Fast REDUCTION Operation
  */
-#define VERIFY_MODE 4
-
-/**
- * @brief 연산 구현 정확성 검증 / 성능 측정(속도 측정) 설정
- * 0: 연산 검증  
- * 1: 연산 검증 & 성능 측정
- */
-#define BENCHMARK_FLAG 1
+#define VERIFY_MODE 7
 
 /**
  * @brief 검증시 반복 횟수 (BENCHMARK_FLAG를 1로 설정 시, 성능 측정 반복 횟수가 됨)
  * @note If BENCHMARK_FLAG == 1, then recommend REPEAT_COUNT >= 1000.
 */
-#define REPEAT_COUNT 1000
+#define REPEAT_COUNT 100
 
 /**
  * @brief 검증시 입력 1(Src1)의 워드 길이

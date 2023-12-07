@@ -32,11 +32,9 @@ void add_test() {
         bi_delete(&result);
     }
 
-#if BENCHMARK_FLAG == 1
-        printf("print(\" 소요 시간 : ");
-        printf("%f", bench/REPEAT_COUNT);
-        printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
-#endif
+    printf("print(\" 소요 시간 : ");
+    printf("%f", bench/REPEAT_COUNT);
+    printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
 }
 
 void sub_test() { 
@@ -69,11 +67,9 @@ void sub_test() {
         bi_delete(&result);
     }
 
-#if BENCHMARK_FLAG == 1
-        printf("print(\" 소요 시간 : ");
-        printf("%f", bench/REPEAT_COUNT);
-        printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
-#endif
+    printf("print(\" 소요 시간 : ");
+    printf("%f", bench/REPEAT_COUNT);
+    printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
 }
 
 void mul_test() { 
@@ -106,12 +102,10 @@ void mul_test() {
         bi_delete(&result);
     }
 
-#if BENCHMARK_FLAG == 1
-        //printf("print( Karatsuba flag : %d)\n", KARA_FLAG);
-        printf("print(\" 소요 시간 : ");
-        printf("%f", bench/REPEAT_COUNT);
-        printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
-#endif
+    //printf("print( Karatsuba flag : %d)\n", KARA_FLAG);
+    printf("print(\" 소요 시간 : ");
+    printf("%f", bench/REPEAT_COUNT);
+    printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
 }
 
 void div_test() { 
@@ -155,11 +149,9 @@ void div_test() {
         bi_delete(&num1);
     }
 
-#if BENCHMARK_FLAG == 1
-        printf("print(\" 소요 시간 : ");
-        printf("%f", bench/REPEAT_COUNT);
-        printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
-#endif
+    printf("print(\" 소요 시간 : ");
+    printf("%f", bench/REPEAT_COUNT);
+    printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
 }
 
 void mod_test() { 
@@ -194,11 +186,9 @@ void mod_test() {
         bi_delete(&result);
     }
 
-#if BENCHMARK_FLAG == 1
-        printf("print(\" 소요 시간 : ");
-        printf("%f", bench/REPEAT_COUNT);
-        printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
-#endif
+    printf("print(\" 소요 시간 : ");
+    printf("%f", bench/REPEAT_COUNT);
+    printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
 }
 
 void sqr_test() { 
@@ -226,11 +216,9 @@ void sqr_test() {
         bi_delete(&result);
     }
 
-#if BENCHMARK_FLAG == 1
-        printf("print(\" 소요 시간 : ");
-        printf("%f", bench/REPEAT_COUNT);
-        printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
-#endif
+    printf("print(\" 소요 시간 : ");
+    printf("%f", bench/REPEAT_COUNT);
+    printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
 }
 
 void exp_mod_test() { 
@@ -270,11 +258,9 @@ void exp_mod_test() {
         bi_delete(&M);
     }
 
-#if BENCHMARK_FLAG == 1
-        printf("print(\" 소요 시간 : ");
-        printf("%f", bench/REPEAT_COUNT);
-        printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
-#endif
+    printf("print(\" 소요 시간 : ");
+    printf("%f", bench/REPEAT_COUNT);
+    printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
 }
 
 void barr_test() { 
@@ -312,12 +298,10 @@ void barr_test() {
         bi_delete(&T);
     }
 
-#if BENCHMARK_FLAG == 1
-        //printf("print( Karatsuba flag : %d)\n", KARA_FLAG);
-        printf("print(\" 소요 시간 : ");
-        printf("%f", bench/REPEAT_COUNT);
-        printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
-#endif
+    //printf("print( Karatsuba flag : %d)\n", KARA_FLAG);
+    printf("print(\" 소요 시간 : ");
+    printf("%f", bench/REPEAT_COUNT);
+    printf("초 ( %d 회 반복 평균)\")\n", REPEAT_COUNT);
 }
 
 int main() {
@@ -363,8 +347,7 @@ int main() {
 // ------------- Barr. Reduction -------------
 #elif (VERIFY_MODE == 7) 
         barr_test();
-
-#endif        
+#endif
 
     printf("print(\"                %%s/");
     printf("%d", REPEAT_COUNT);
