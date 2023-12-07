@@ -226,6 +226,12 @@ void bi_gen_rand(BIGINT** bi_dst, int sign, int wordlen) {
     array_rand((*bi_dst)->p, wordlen);
 
     bi_refine(*bi_dst);
+    
+    if((*bi_dst)->wordlen != wordlen) {
+        bi_delete(bi_dst);
+        bi_gen_rand(bi_dst, sign, wordlen);
+    }
+    
 }
 
 /**
