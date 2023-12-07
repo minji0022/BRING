@@ -496,8 +496,12 @@ void reductionOf2(BIGINT** bi_dst, BIGINT* bi_src, int r){
         return ;
     }
     else {
-        printf("bi_dst is not allocated \n");
-        return ; // 나머지는 사용 안함. 필요시 구현
+        int k = r >> SHIFT_SIZE;
+        int r_prime = r % WORD_BIT_SIZE;
+        bi_new(bi_dst, k + 1);
+        (*bi_dst)->p[k] = (word)((bi_src->p[k]) % ((word)1 << r_prime));
+        array_copy((*bi_dst)->p, bi_src->p, k);
+        bi_print_bigint_hex(*bi_dst);
+        return ; // 나머지는 사용 안함.
     }
-    
 }
