@@ -3,8 +3,10 @@ CC = gcc
 all : bignum bring_test verify_code
 
 # BRING의 제공 연산에 대한 예제 코드
-bring_test : bignum.dylib examples/bring_arith_test.c
+bring_test : bignum.dylib examples/bring_arith_test.c examples/bring_updated_arith_test.c examples/bring_error_test.c
 	$(CC) -Wall -g examples/bring_arith_test.c -o examples/bring_arith_test bignum.dylib
+	$(CC) -Wall -g examples/bring_updated_arith_test.c -o examples/bring_updated_arith_test bignum.dylib
+	$(CC) -Wall -g examples/bring_error_test.c -o examples/bring_error_test bignum.dylib
 
 # BRING의 제공 연산에 대한 검증 파이썬 코드 출력
 verify_code : bignum.dylib bring_verify.c
@@ -20,4 +22,4 @@ bignum : bring_util.c bring_add.c bring_sub.c bring_mul.c bring_div.c bring_arit
 
 # 실행 파일 삭제
 clean:
-	rm examples/bring_arith_test bring_verify
+	rm examples/bring_arith_test examples/bring_updated_arith_test examples/bring_error_test bring_verify

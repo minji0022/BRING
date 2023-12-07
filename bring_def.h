@@ -12,11 +12,10 @@
 // DEFINITION OF ERROR CODE 
 #define FUNC_SUCCESS               100 // 함수 정상 작동
 #define FUNC_ERROR                 101 // 함수 이상 작동
-#define POINTER_ERROR              102 // 이미 사용중인 포인터 
-#define NULL_POINTER_ERROR         103 // 널 포인터 에러.
-#define SIZE_ERROR                 104 // 사이즈 에러.
-#define INVALID_CHAR_ERROR         105 // 잘못된 문자열 들어갔을 때 생기는 에러.
-#define ERR_INVALID_INPUT          106 // 잘못된 인풋 들어간 경우.
+#define NULL_POINTER_ERROR         102 // 널 포인터 에러.
+#define SIZE_ERROR                 103 // 사이즈 에러.
+#define INVALID_CHAR_ERROR         104 // 잘못된 문자열 입력 에러.
+#define ERR_INVALID_INPUT          105 // 잘못된 입력 에러.
 
 //################################################################################################# 
 //                                  BIGINT에 사용되는 정의들

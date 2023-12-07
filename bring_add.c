@@ -72,6 +72,8 @@ int BI_Add_zxy(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2) {
             return FUNC_SUCCESS;
         }
     }
+    
+    return FUNC_ERROR;
 }
 
 /**

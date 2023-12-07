@@ -303,18 +303,18 @@ void bi_Sqrc_zy(BIGINT** bi_dst, BIGINT* bi_src1) {
 * @param[in] flag schoolbook 곱셈 워드 단위 지정 Flag
 */
 void bi_Mul_Karatsuba(BIGINT** bi_dst, BIGINT* bi_src1, BIGINT* bi_src2, int flag){
-    BIGINT* temp_mul = NULL;
-    BIGINT* temp_C = NULL;
-    BIGINT *A0 = NULL, *A1 = NULL, *B0 = NULL, *B1 = NULL;
-    BIGINT *T0 = NULL, *T1 = NULL, *T1_1 = NULL;
-    BIGINT *S = NULL, *S0 = NULL, *S1 = NULL;
-
     // schoolbook 곱셈 워드 단위 지정 Flag
     if (flag >= bi_get_min_length(bi_src1, bi_src2)) {
         bi_Mul_Schoolbook_zxy(bi_dst, bi_src1, bi_src2);
         return ;
     }
 
+    BIGINT* temp_mul = NULL;
+    BIGINT* temp_C = NULL;
+    BIGINT *A0 = NULL, *A1 = NULL, *B0 = NULL, *B1 = NULL;
+    BIGINT *T0 = NULL, *T1 = NULL, *T1_1 = NULL;
+    BIGINT *S = NULL, *S0 = NULL, *S1 = NULL;
+    
     int l = (bi_get_max_length(bi_src1, bi_src2) + 1) >> 1;
     int lw = l * WORD_BIT_SIZE;
     
