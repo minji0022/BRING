@@ -14,9 +14,9 @@ void bi_import_from_uint8(BIGINT** num, uint8_t* input, size_t input_size, int s
 size_t bi_sizeof_bytes(BIGINT* num);
 
 // RSA-PSS Sign
-void rsa_pss_sign(BIGINT** signature, BIGINT* message, BIGINT* d, BIGINT* n, uint8_t* salt, size_t salt_length);
+void rsa_pss_sign(BIGINT** signature, uint8_t* em_s, BIGINT* message, BIGINT* d, BIGINT* n, uint8_t* salt, size_t salt_length);
 
 // RSA-PSS Verify
-int rsa_pss_verify(BIGINT* signature, BIGINT* message, BIGINT* e, BIGINT* n, size_t salt_length);
+int rsa_pss_verify(BIGINT* signature, uint8_t* em_s, BIGINT* message, BIGINT* e, BIGINT* n, size_t salt_length);
 
 #endif  // RSA_PSS_H

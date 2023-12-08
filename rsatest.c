@@ -55,7 +55,7 @@ int main() {
     bi_set_by_string(&e, NON_NEGATIVE, "010001", HEXDECIMAL);
 
     printf("RSA in progress...\n");
-    // display_rsa(msg, n, e, d);
+    display_rsa(msg, n, e, d);
 
     printf("RSA-PSS signing in progress...\n");
 
@@ -64,7 +64,12 @@ int main() {
     generate_random_salt(salt, salt_length);
 
     BIGINT* signature = NULL;
-    rsa_pss_sign(&signature, msg, d, n, salt, salt_length);
+    
+    size_t modulus_size = bi_sizeof_bytes(n);
+    size_t em_length = (modulus_size * 8 + 7) / 8;
+    uint8_t* em_s = (uint8_t*)malloc(em_length);
+
+    rsa_pss_sign(&signature, em_s, msg, d, n, salt, salt_length);
 
     printf("RSA-PSS verification in progress...\n");
 
@@ -72,7 +77,7 @@ int main() {
     bi_print_bigint_hex(signature);
     printf("\n");
 
-    int verification_result = rsa_pss_verify(signature, msg, e, n, 32);
+    int verification_result = rsa_pss_verify(signature, em_s, msg, e, n, 32);
 
     if (verification_result) {
         printf("RSA-PSS verification succeeded!\n");
@@ -85,6 +90,7 @@ int main() {
     bi_delete(&d);
     bi_delete(&e);
     bi_delete(&signature);
+    free(em_s);
 
     return 0;
 }
