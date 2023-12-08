@@ -1,7 +1,7 @@
 #ifndef RSATEST_H
 #define RSATEST_H
 
-#include "bring_arith.h"
+#include "../bring_arith.h"
 #include <assert.h>
 
 void encrypt(BIGINT** encrypted, BIGINT* message, BIGINT* e, BIGINT* n);

@@ -2,7 +2,7 @@
 #define RSA_PSS_H
 
 #include <stdint.h>
-#include "bring_arith.h"
+#include "../bring_arith.h"
 
 // Export a BigInt to a uint8_t array
 void bi_export_to_uint8(BIGINT* num, uint8_t* output, size_t output_size);
